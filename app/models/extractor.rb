@@ -91,8 +91,6 @@ class Extractor
       "#{size[:w]}"
     elsif size[:w] && size[:h]
       "#{size[:w]}x#{size[:h]}!"
-    else
-      # raise InvalidAttributeError, "Invalid size: #{size}"
     end
   end
 
