@@ -24,7 +24,10 @@ class ImagesController < ApplicationController
   end
 
   def info
-
+    @informer = Informer.new params[:id]
+    @informer.inform
+    id_url = File.join("#{request.protocol}#{request.host_with_port}", 'iiif', params[:id])
+    render json: @informer.info(id_url).to_json
   end
 
   private

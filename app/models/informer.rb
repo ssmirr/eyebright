@@ -17,6 +17,26 @@ class Informer
     }
   end
 
+  def info(id_url)
+    {
+      width: @width,
+      height: @height,
+      sizes: sizes,
+      tiles: [
+        {
+          width: @tile_width,
+          scaleFactors: @scale_factors
+        }
+      ],
+      protocol: 'http://iiif.io/api/image',
+      profile: [
+        "http://iiif.io/api/image/2/level1.json"
+      ],
+      '@id' => id_url,
+      '@context' => 'http://iiif.io/api/image/2/context.json'
+    }
+  end
+
   def kdu_info
     result = `#{kdu_info_cmd}`
     xml = Nokogiri::XML result
@@ -39,6 +59,7 @@ class Informer
   end
 
   def extract_levels
+    # FIXME: get the current number of levels
     6
   end
 
@@ -46,5 +67,17 @@ class Informer
     @scale_factors = (0..@levels).map do |level|
       2**level
     end
+  end
+
+  def sizes
+    w = @width
+    h = @height
+    sizes = []
+    (0..@levels).each do |level|
+      sizes << { width: w, height: h }
+      w = (w/2.0).ceil
+      h = (h/2.0).ceil
+    end
+    sizes.reverse
   end
 end
