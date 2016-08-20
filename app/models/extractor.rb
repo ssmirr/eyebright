@@ -46,6 +46,26 @@ class Extractor
     if convert_resize
       cmd << " -resize #{convert_resize} "
     end
+
+    if @iiif[:rotation][:degrees] != 0
+      if ![90, 180, 270].any?{|degree| degree == @iiif[:rotation][:degrees]}
+        cmd << " -virtual-pixel white"
+      end
+      cmd << " +distort srt #{@iiif[:rotation][:degrees]}"
+    end
+
+    if @iiif[:rotation][:mirror]
+      cmd << " -flop"
+    end
+
+    case @iiif[:quality]
+      when 'grey'
+        cmd << ' -colorspace Gray'
+      when 'bitonal'
+        cmd << ' -colorspace Gray'
+        cmd << ' -type Bilevel'
+      end
+
     cmd << " #{@temp_response_image.path}"
     puts cmd
     cmd
