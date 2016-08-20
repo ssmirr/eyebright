@@ -6,7 +6,7 @@ class Extractor
     @iiif = IiifUrl.parse url
     @informer = Informer.new params[:id]
     @informer.inform
-    @sizer = @iiif[:size].is_a?(String) ? {w: @informer.width, h: @informer.height} : @iiif[:size]
+    enrich_iiif_params
     # FIXME: pick better temporary images
     @temp_out_image = Tempfile.new [params[:id], '.tif']
     @temp_response_image = Tempfile.new [params[:id], ".#{params[:format]}"]
@@ -16,19 +16,29 @@ class Extractor
     if @iiif[:region] == 'full'
       top, left, height, width = [0, 0, @informer.height, @informer.width]
     else
-      top, left, height, width = @iiif[:region][:y], @iiif[:region][:y], @iiif[:region][:h], @iiif[:region][:w]
+      top, left, height, width = @iiif[:region][:y], @iiif[:region][:x], @iiif[:region][:h], @iiif[:region][:w]
     end
 
-    @top_pct = top.to_f / @informer.height
-    @left_pct = left.to_f / @informer.width
-    @height_pct = height.to_f / @informer.height
-    @width_pct = width.to_f / @informer.width
+    @top_pct = top / @informer.height.to_f
+    @left_pct = left / @informer.width.to_f
+    @height_pct = height / @informer.height.to_f
+    @width_pct = width / @informer.width.to_f
+
     cmd = kdu_cmd
     puts cmd
     `#{kdu_cmd}`
     `#{convert_cmd}`
     FileUtils.rm @temp_out_image.path
     @temp_response_image
+  end
+
+  def square?
+    if @iiif[:region] == 'full'
+      false
+    else
+      ['square', '!square', 'square!'].any?{|sq| sq == @iiif[:region]} ||
+      @iiif[:region][:region_type] == 'regionSquare'
+    end
   end
 
   def kdu_cmd
@@ -44,7 +54,7 @@ class Extractor
   def convert_cmd
     cmd = "convert #{@temp_out_image.path} "
     if convert_resize
-      cmd << " -resize #{convert_resize} "
+      #cmd << " -resize #{convert_resize} "
     end
 
     if @iiif[:rotation][:degrees] != 0
@@ -78,7 +88,7 @@ class Extractor
     elsif !size[:w] && size[:h]
       "x#{size[:h]}"
     elsif size[:w] && !size[:h]
-      "#{size[:w]}x"
+      "#{size[:w]}"
     elsif size[:w] && size[:h]
       "#{size[:w]}x#{size[:h]}!"
     else
@@ -87,12 +97,20 @@ class Extractor
   end
 
   def pick_reduction
-    if @sizer[:w]
-      region_width = @iiif[:region] == 'full' ? @informer.width : @iiif[:region][:w]
-      reduction_factor = (region_width / @sizer[:w])
+    if @iiif[:size][:w]
+      region_width = if @iiif[:region] == 'full'
+          @informer.width
+        else
+          @iiif[:region][:w]
+        end
+      reduction_factor = (region_width / @iiif[:size][:w].to_f)
     else
-      region_height = @iiif[:region] == 'full' ? @informer.height : @iiif[:region][:h]
-      reduction_factor = (region_height / @sizer[:h])
+      region_height = if @iiif[:region] == 'full'
+          @informer.height
+        else
+          @iiif[:region][:h]
+        end
+      reduction_factor = (region_height / @iiif[:size][:h].to_f)
     end
 
     scale_factors = @informer.scale_factors.reverse()
@@ -120,6 +138,66 @@ class Extractor
     else
       0
     end
+
+  end
+
+  def enrich_iiif_params
+    if square?
+      if @informer.width == @informer.height
+        # image is square already
+        x = 0
+        y = 0
+        w = @informer.width
+        h = @informer.width
+      elsif @informer.width < @informer.height
+        # image is portrait
+        x = 0
+        w = @informer.width
+        h = @informer.width
+        case @iiif[:region]
+        when 'square'
+          # y will be minus half the width from the centerpoint
+          centery = (@informer.height/2).round
+          halfwidth = (@informer.width/2).round
+          y = centery - halfwidth
+        when '!square'
+          # top gravity
+          y = 0
+        when 'square!'
+          # bottom gravity
+          y = @informer.height - @informer.width
+        end
+
+      elsif @informer.width > @informer.height
+        # orientation is landscape
+        y = 0
+        w = @informer.height
+        h = @informer.height
+        case @iiif[:region]
+        when 'square'
+          # x will be minus half the height from the centerpoint
+          centerx = (info.width/2).round
+          halfheight = (info.height/2).round
+          x = centerx - halfheight
+        when '!square'
+          # top gravity
+          x = 0
+        when 'square!'
+          # bottom gravity
+          x = @informer.width - @informer.height
+        end
+      end
+
+      @iiif[:region] = {}
+      @iiif[:region][:x] = x
+      @iiif[:region][:y] = y
+      @iiif[:region][:w] = w
+      @iiif[:region][:h] = h
+      @iiif[:region][:region_type] = 'regionSquare'
+    end
+
+    # TODO: If @iiif size is pct enrich
+
 
   end
 
