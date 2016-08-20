@@ -54,7 +54,7 @@ class Extractor
   def convert_cmd
     cmd = "convert #{@temp_out_image.path} "
     if convert_resize
-      #cmd << " -resize #{convert_resize} "
+      cmd << " -resize #{convert_resize} "
     end
 
     if @iiif[:rotation][:degrees] != 0

@@ -1,4 +1,4 @@
-class Informer
+class InformerKdu
 
   attr_reader :height, :width, :tile_width, :tile_height, :scale_factors
 
@@ -8,7 +8,7 @@ class Informer
   end
 
   def inform
-    opj_info
+    kdu_info
     {
       width: @width,
       height: @height,
@@ -37,28 +37,30 @@ class Informer
     }
   end
 
-  def opj_info
-    result = `#{opj_info_cmd}`
-    width_match = result.match /x1=(.*),/
-    @width =  width_match[1].to_i
+  def kdu_info
+    result = `#{kdu_info_cmd}`
+    xml = Nokogiri::XML result
+    codestream = xml.xpath("//JP2_family_file/jp2c/codestream")
+    @width = codestream.xpath('./width')[0].text.to_i
+    @height = codestream.xpath('./height')[0].text.to_i
+    siz = codestream.xpath('./SIZ')[0].text
+    match = siz.match /Stiles=\{(.*)\}/
+    tile_width, tile_height = match[1].split(',')
+    @tile_width = tile_width.to_i
+    @tile_height = tile_height.to_i
 
-    height_match = result.match /, y1=(.*)/
-    @height =  height_match[1].to_i
-
-    levels_match = result.match /numresolutions=(.*)/
-    @levels = levels_match[1].to_i - 1
-
-    tiles_match_width = result.match /tdx=(.*),/
-    @tile_width =  tiles_match_width[1].to_i
-
-    tiles_match_height = result.match /tdy=(.*)/
-    @tile_height =  tiles_match_height[1].to_i
+    @levels = extract_levels
 
     get_scale_factors
   end
 
-  def opj_info_cmd
-    "opj_dump -i #{@path}"
+  def kdu_info_cmd
+    "kdu_jp2info -siz -boxes 1 -com -i #{@path}"
+  end
+
+  def extract_levels
+    # FIXME: get the current number of levels
+    6
   end
 
   def get_scale_factors
