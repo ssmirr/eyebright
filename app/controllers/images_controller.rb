@@ -4,7 +4,6 @@ class ImagesController < ApplicationController
 
   def show
     jp2_filepath = Resolver.path(params[:id])
-
     if File.exist? jp2_filepath
       extractor = Extractor.new(request.original_url, params)
       image_path = extractor.extract
