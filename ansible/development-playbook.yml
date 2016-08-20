@@ -1,0 +1,43 @@
+---
+- hosts: iiif
+  become: yes
+  become_method: sudo
+  become_user: root
+  remote_user: root
+  gather_facts: yes
+  vars:
+    project_name: iiif
+  pre_tasks:
+    - name: necessary packages
+      yum:
+        name: "{{ item }}"
+        state: present
+      with_items:
+        - libtiff-tools
+        - ImageMagick
+  roles:
+    - role: basic-setup
+    - role: dev-dummy-cert
+    - role: dev-link-opt-rails
+    - role: jp2
+    - role: rvm_io.rvm1-ruby
+      rvm1_rubies:
+        - ruby-2.3.1
+    - role: rvm-setup
+      users:
+        - vagrant
+    - role: passenger-apache
+      ruby: ruby-2.3.1
+    - role: dev-bundle
+  post_tasks:
+    # These post_tasks are to create the same directories as exist on the
+    # production server so that we can actually try this out!
+    # Make them wide-open just to make it easier.
+    - name: create directories
+      file:
+        path: "{{ item }}"
+        state: directory
+        mode: "u=rwx,g=rwx,o=rwx"
+      with_items:
+        - /access-images/ocr
+        - /access-images/jp2s
