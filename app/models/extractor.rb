@@ -2,16 +2,14 @@ class Extractor
   # Just a kdu extractor for now
 
   def initialize(url, params)
-    @url = url
-    @params = params
     @path = Resolver.path params[:id]
     @iiif = IiifUrl.parse url
     @informer = Informer.new params[:id]
     @informer.inform
     @sizer = @iiif[:size].is_a?(String) ? {w: @informer.width, h: @informer.height} : @iiif[:size]
     # FIXME: pick better temporary images
-    @temp_out_image = "/tmp/#{params[:id]}.tif"
-    @temp_response_image = "/tmp/#{params[:id]}.#{params[:format]}"
+    @temp_out_image = Tempfile.new [params[:id], '.tif']
+    @temp_response_image = Tempfile.new [params[:id], ".#{params[:format]}"]
   end
 
   def extract
@@ -27,16 +25,15 @@ class Extractor
     @width_pct = width.to_f / @informer.width
     cmd = kdu_cmd
     puts cmd
-    `#{cmd}`
-
+    `#{kdu_cmd}`
     `#{convert_cmd}`
-
+    FileUtils.rm @temp_out_image.path
     @temp_response_image
   end
 
   def kdu_cmd
-    cmd = "kdu_expand -i #{@path} -o #{@temp_out_image} -region '{#{@top_pct},#{@left_pct}},{#{@height_pct},#{@width_pct}}'"
-    reduction = if @params.size == 'full'
+    cmd = "kdu_expand -i #{@path} -o #{@temp_out_image.path} -region '{#{@top_pct},#{@left_pct}},{#{@height_pct},#{@width_pct}}'"
+    reduction = if @iiif[:size] == 'full'
       0
     else
       pick_reduction
@@ -45,11 +42,11 @@ class Extractor
   end
 
   def convert_cmd
-    cmd = "convert #{@temp_out_image} "
+    cmd = "convert #{@temp_out_image.path} "
     if convert_resize
       cmd << " -resize #{convert_resize} "
     end
-    cmd << " #{@temp_response_image}"
+    cmd << " #{@temp_response_image.path}"
     puts cmd
     cmd
   end
