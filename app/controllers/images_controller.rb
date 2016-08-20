@@ -3,8 +3,6 @@ class ImagesController < ApplicationController
   before_filter :validate_request, only: [:show]
 
   def show
-    first_two = params[:id][0,2]
-    # jp2_filepath = "/access-images/jp2s/#{first_two}/#{params[:id]}.jp2"
     jp2_filepath = Resolver.path(params[:id])
 
     if File.exist? jp2_filepath

@@ -73,8 +73,6 @@ class Extractor
       cmd << " +distort srt #{@iiif[:rotation][:degrees]}"
     end
 
-
-
     case @iiif[:quality]
       when 'grey'
         cmd << ' -colorspace Gray'
