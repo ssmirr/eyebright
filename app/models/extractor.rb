@@ -57,6 +57,15 @@ class Extractor
       cmd << " -resize #{convert_resize} "
     end
 
+    if @iiif[:rotation][:mirror]
+      degrees = @iiif[:rotation][:degrees]
+      cmd << if degrees == 0 || degrees == 180
+        " -flop"
+      elsif degrees == 90 || degrees == 270
+        " -flip"
+      end
+    end
+
     if @iiif[:rotation][:degrees] != 0
       if ![90, 180, 270].any?{|degree| degree == @iiif[:rotation][:degrees]}
         cmd << " -virtual-pixel white"
@@ -64,9 +73,7 @@ class Extractor
       cmd << " +distort srt #{@iiif[:rotation][:degrees]}"
     end
 
-    if @iiif[:rotation][:mirror]
-      cmd << " -flop"
-    end
+
 
     case @iiif[:quality]
       when 'grey'
