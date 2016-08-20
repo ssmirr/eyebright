@@ -195,7 +195,17 @@ class Extractor
     end
 
     # TODO: If @iiif size is pct enrich
-
+    if @iiif[:size].is_a?(Hash) && @iiif[:size][:pct]
+      # determine size of original resulting image
+      region_width = if @iiif[:region] == 'full'
+        @informer.width
+      else
+        @iiif[:region][:w]
+      end
+      # determine the final size that we want for the image
+      percent_factor = @iiif[:size][:pct] / 100
+      @iiif[:size][:w] = (region_width * percent_factor).round
+    end
 
   end
 
