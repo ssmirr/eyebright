@@ -9,9 +9,9 @@ class ImagesController < ApplicationController
       image_path = extractor.extract
 
       if File.size? image_path
-        FileUtils.mkdir_p image_cache_file_directory
+        FileUtils.mkdir_p image_cache_directory
         FileUtils.mv image_path, image_cache_file_path
-        FileUtils.chmod_R "ugo=rwX", image_cache_file_directory
+        FileUtils.chmod_R "ugo=rwX", image_cache_directory
 
         send_file image_cache_file_path, type: Mime::Type.lookup_by_extension(params[:format]), disposition: 'inline'
       else
@@ -37,17 +37,37 @@ class ImagesController < ApplicationController
     else
       'application/json'
     end
-    render json: @informer.info(id_url).to_json, content_type: content_type
+
+    json = @informer.info(id_url).to_json
+
+    FileUtils.mkdir_p identifier_directory
+    File.open(info_cache_file_path, 'w') do |fh|
+      fh.puts json
+    end
+
+    render json: json, content_type: content_type
   end
 
   private
 
-  def image_cache_file_directory
-    File.join(Rails.root, "public/iiif/#{params[:id]}/#{params[:region]}/#{params[:size]}/#{params[:rotation]}")
+  def identifier_directory
+    File.join Rails.root, "public/iiif/#{params[:id]}"
+  end
+
+  def image_cache_directory
+    File.join(identifier_directory, "/#{params[:region]}/#{params[:size]}/#{params[:rotation]}")
   end
 
   def image_cache_file_path
-    File.join(image_cache_file_directory, "#{params[:quality]}.#{params[:format]}")
+    File.join(image_cache_directory, "#{params[:quality]}.#{params[:format]}")
+  end
+
+  def info_cache_directory
+    identifier_directory
+  end
+
+  def info_cache_file_path
+    File.join info_cache_directory, 'info.json'
   end
 
   def validate_request
