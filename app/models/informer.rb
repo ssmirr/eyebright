@@ -7,18 +7,34 @@ class Informer
     @path = Resolver.path(id)
   end
 
-  # inform does the work of getting the information needed
+  # Inform does the work of getting the information needed, but does not create
+  # the info.json response. We do the least we possibly can for most cases.
+  # TODO: This is kind of wonky but it is always necessary to call this method
+  # before we can call iiif_info, but in most cases we never really need the
+  # full info.json response.
   def inform
+    # If the info.json exists in the file system cache then we read that in
+    # and initialize the variables that are used by an extractor like width,
+    # height, and scale factors.
     if File.exist? info_cache_file_path
       parse_info_file
     else
-      opj_info
+      # If a cached file does not exist, then we use OpenJPEG to get the
+      # information. We use this tool as it more clearly gives all the relevant
+      # information including number of resolution levels.
+      get_opj_info
     end
+    # Now that we have the information that an extractor regularly needs one
+    # way or another we can cache it.
+    memcache_info
   end
 
-  def info
-    if @info
-      @info
+  # Creates the info.json response.
+  # Before calling this method #inform needs to be called so that the info.json
+  # can be created.
+  def iiif_info
+    if @iiif_info
+      @iiif_info
     elsif File.exist? info_cache_file_path
       read_info_file
     else
@@ -26,7 +42,7 @@ class Informer
     end
   end
 
-  def opj_info
+  def get_opj_info
     puts opj_info_cmd
     result = `#{opj_info_cmd}`
     width_match = result.match /x1=(.*),/
@@ -50,7 +66,7 @@ class Informer
 
   # If we're actually
   def create_full_info
-    @info = {
+    @iiif_info = {
       width: @width,
       height: @height,
       sizes: sizes,
@@ -67,13 +83,15 @@ class Informer
       '@id' => info_id,
       '@context' => 'http://iiif.io/api/image/2/context.json'
     }
-    # cache the info doc now. We do the caching here so that it gets cached
+    # Cache the info doc now. We do the caching here so that it gets cached
     # whether it is being created via an image or an info.json request.
     FileUtils.mkdir_p identifier_directory
     File.open(info_cache_file_path, 'w') do |fh|
-      fh.puts @info.to_json
+      fh.puts @iiif_info.to_json
     end
-    @info
+    # Also cache to Memcached.
+
+    @iiif_info
   end
 
   def info_id
@@ -103,10 +121,10 @@ class Informer
   end
 
   def parse_info_file
-    @info = read_info_file
-    @width = info['width']
-    @height = info['height']
-    @scale_factors = info['tiles'][0]['scaleFactors']
+    @iiif_info = read_info_file
+    @width = @iiif_info['width']
+    @height = @iiif_info['height']
+    @scale_factors = @iiif_info['tiles'][0]['scaleFactors']
   end
 
   def read_info_file
@@ -115,6 +133,13 @@ class Informer
   end
 
   private
+
+  # In Memcache we store just enough information for the extractors to use
+  # without having to return here for the information.
+  def memcache_info
+    MDC.set @id, {width: @width, height: @height, scale_factors: @scale_factors }
+    Rails.logger.info "Memcache Set #{@id}"
+  end
 
   def identifier_directory
     File.join Rails.root, "public/iiif", @id

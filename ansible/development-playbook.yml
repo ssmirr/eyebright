@@ -31,6 +31,9 @@
       apache_virtualhost_lines:
         - Header set Access-Control-Allow-Origin "*"
     - role: dev-bundle
+    - role: geerlingguy.redis
+      redis_appendonly: "yes"
+    - role: geerlingguy.memcached
   post_tasks:
     # These post_tasks are to create the same directories as exist on the
     # production server so that we can actually try this out!

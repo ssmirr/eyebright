@@ -23,6 +23,8 @@ class ImagesController < ApplicationController
   end
 
   def info
+    # If this route is hit then the info.json is not cached to the filesystem.
+    # The informer takes the fastest path to getting the information.
     @informer = Informer.new params[:id]
     @informer.inform
     id_url = File.join("#{request.protocol}#{request.host_with_port}", 'iiif', params[:id])
@@ -39,7 +41,7 @@ class ImagesController < ApplicationController
       'application/json'
     end
 
-    json = @informer.info.to_json
+    json = @informer.iiif_info.to_json
     render json: json, content_type: content_type
   end
 

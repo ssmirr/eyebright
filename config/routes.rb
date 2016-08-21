@@ -1,12 +1,16 @@
 Rails.application.routes.draw do
   # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
 
-  match "iiif/:id/:region/:size/:rotation/:quality.:format", to: 'images#show', via: [:get, :head]
+  prefix = 'iiif'
 
-  match "iiif/:id/info.json", to: 'images#info', via: [:get, :head]
+  match "#{prefix}/:id/:region/:size/:rotation/:quality.:format", to: 'images#show', via: [:get, :head]
 
-  get "iiif/:id", to: redirect("iiif/%{id}/info.json")
+  match "#{prefix}/:id/info.json", to: 'images#info', via: [:get, :head]
 
-  get "view/:id", to: 'images#view'
+  get "#{prefix}/:id", to: redirect("iiif/%{id}/info.json")
+
+  get "#{prefix}/:id/view", to: 'images#view'
+
+  mount ResqueWeb::Engine => "/jobs"
 
 end

@@ -1,6 +1,9 @@
 source 'https://rubygems.org'
 
 gem 'iiif_url'
+gem 'resque'
+gem 'resque-web', require: 'resque_web'
+gem 'dalli'
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
 gem 'rails', '~> 5.0.0', '>= 5.0.0.1'

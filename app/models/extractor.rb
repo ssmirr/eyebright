@@ -2,14 +2,29 @@ class Extractor
   # Just a kdu extractor for now
 
   def initialize(url, params)
-    @path = Resolver.path params[:id]
     @iiif = IiifUrl.parse url
-    @informer = Informer.new params[:id]
-    @informer.inform
+    @params = params
+    @path = Resolver.path @params[:id]
+    get_informer
     enrich_iiif_params
     # FIXME: pick better temporary images
-    @temp_out_image = Tempfile.new [params[:id], '.tif']
-    @temp_response_image = Tempfile.new [params[:id], ".#{params[:format]}"]
+    @temp_out_image = Tempfile.new [@params[:id], '.tif']
+    @temp_response_image = Tempfile.new [@params[:id], ".#{@params[:format]}"]
+  end
+
+  # We only need the width, height, and scale_factors in the extractor for our
+  # calculations. So that's what we get back one way or another.
+  def get_informer
+    # If the information is in Memcache we use that. Otherwise we use an informer
+    # to get the information from the image.
+    mc_info = MDC.get @params[:id]
+    if mc_info
+      Rails.logger.info "Memcached Hit #{@params[:id]}"
+      @informer = OpenStruct.new mc_info
+    else
+      @informer = Informer.new @params[:id]
+      @informer.inform
+    end
   end
 
   def extract

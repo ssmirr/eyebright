@@ -1,0 +1,1 @@
+MDC = Dalli::Client.new
