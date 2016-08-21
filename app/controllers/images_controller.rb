@@ -42,6 +42,10 @@ class ImagesController < ApplicationController
     render json: json, content_type: content_type
   end
 
+  def view
+    @info_json_url = File.join IiifUrl.base_url, params[:id], 'info.json'
+  end
+
   private
 
   def identifier_directory

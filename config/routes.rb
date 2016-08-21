@@ -6,4 +6,7 @@ Rails.application.routes.draw do
   match "iiif/:id/info.json", to: 'images#info', via: [:get, :head]
 
   get "iiif/:id", to: redirect("iiif/%{id}/info.json")
+
+  get "view/:id", to: 'images#view'
+
 end
