@@ -67,7 +67,8 @@ class Informer
       '@id' => info_id,
       '@context' => 'http://iiif.io/api/image/2/context.json'
     }
-    # cache the info doc
+    # cache the info doc now. We do the caching here so that it gets cached
+    # whether it is being created via an image or an info.json request.
     FileUtils.mkdir_p identifier_directory
     File.open(info_cache_file_path, 'w') do |fh|
       fh.puts @info.to_json
