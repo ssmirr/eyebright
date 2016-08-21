@@ -27,10 +27,11 @@ class ImagesController < ApplicationController
     @informer.inform
     id_url = File.join("#{request.protocol}#{request.host_with_port}", 'iiif', params[:id])
 
-    headers['Access-Control-Allow-Origin'] = '*'
-    headers['Access-Control-Allow-Methods'] = 'POST, PUT, DELETE, GET, OPTIONS'
-    headers['Access-Control-Request-Method'] = '*'
-    headers['Access-Control-Allow-Headers'] = 'Origin, X-Requested-With, Content-Type, Accept, Authorization'
+    # TODO: find a way where this header only gets set once even behind Apache
+    # headers['Access-Control-Allow-Origin'] = '*'
+    # headers['Access-Control-Allow-Methods'] = 'POST, PUT, DELETE, GET, OPTIONS'
+    # headers['Access-Control-Request-Method'] = '*'
+    # headers['Access-Control-Allow-Headers'] = 'Origin, X-Requested-With, Content-Type, Accept, Authorization'
 
     content_type = if request.format.to_s == 'application/ld+json'
       'application/ld+json'
