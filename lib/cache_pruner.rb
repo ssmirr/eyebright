@@ -1,3 +1,6 @@
+# TODO: There could also be an alternative implementation that uses the file's
+# atime to determine whether to delete a file or not, but that might take
+# longer.
 class CachePruner
 
   def initialize(profiles)
