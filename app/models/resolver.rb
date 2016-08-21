@@ -1,3 +1,4 @@
+# TODO: Allow for other resolvers.
 module Resolver
 
   def self.path(id)
