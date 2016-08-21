@@ -28,6 +28,8 @@
         - vagrant
     - role: passenger-apache
       ruby: ruby-2.3.1
+      apache_virtualhost_lines:
+        - Header set Access-Control-Allow-Origin "*"
     - role: dev-bundle
   post_tasks:
     # These post_tasks are to create the same directories as exist on the
