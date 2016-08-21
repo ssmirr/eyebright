@@ -38,7 +38,7 @@ class ImagesController < ApplicationController
       'application/json'
     end
 
-    json = @informer.info(id_url).to_json
+    json = @informer.info.to_json
 
     FileUtils.mkdir_p identifier_directory
     File.open(info_cache_file_path, 'w') do |fh|
