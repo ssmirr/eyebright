@@ -30,7 +30,6 @@
       ruby: ruby-2.3.1
       apache_virtualhost_lines:
         - Header set Access-Control-Allow-Origin "*"
-    - role: dev-bundle
     - role: geerlingguy.redis
       redis_appendonly: "yes"
     - role: geerlingguy.memcached
