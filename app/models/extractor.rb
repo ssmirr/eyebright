@@ -85,11 +85,12 @@ class Extractor
       if ![90, 180, 270].any?{|degree| degree == @iiif[:rotation][:degrees]}
         cmd << " -virtual-pixel white"
       end
-      cmd << " +distort srt #{@iiif[:rotation][:degrees]}"
+      # cmd << " -distort SRT #{@iiif[:rotation][:degrees]}"
+      cmd << " -rotate #{@iiif[:rotation][:degrees]}"
     end
 
     case @iiif[:quality]
-      when 'grey'
+      when 'gray'
         cmd << ' -colorspace Gray'
       when 'bitonal'
         cmd << ' -colorspace Gray'
