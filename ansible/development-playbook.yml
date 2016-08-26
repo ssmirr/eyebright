@@ -17,6 +17,7 @@
         - libtiff-tools
         - ImageMagick
   roles:
+    # sudo service firewalld stop
     - role: basic-setup
     - role: dev-dummy-cert
     - role: dev-link-opt-rails

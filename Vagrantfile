@@ -30,5 +30,12 @@ Vagrant.configure(2) do |config|
     # ansible.verbose = 'vvvv'
   end
 
+  # set auto_update to false, if you do NOT want to check the correct
+  # additions version when booting this machine
+  config.vbguest.auto_update = true
+
+  # do NOT download the iso file from a webserver
+  config.vbguest.no_remote = false
+
   config.ssh.forward_agent = true
 end
