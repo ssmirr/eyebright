@@ -7,6 +7,7 @@
   gather_facts: yes
   vars:
     project_name: iiif
+    ruby_version: ruby-2.3.1
   pre_tasks:
     - name: necessary packages
       yum:
@@ -22,12 +23,12 @@
     - role: jp2
     - role: rvm_io.rvm1-ruby
       rvm1_rubies:
-        - ruby-2.3.1
+        - "{{ ruby_version }}"
     - role: rvm-setup
       users:
         - vagrant
     - role: passenger-apache
-      ruby: ruby-2.3.1
+      ruby: "{{ ruby_version }}"
       apache_virtualhost_lines:
         - Header set Access-Control-Allow-Origin "*"
     - role: geerlingguy.redis
