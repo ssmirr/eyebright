@@ -32,7 +32,7 @@ class IiifRequestValidator
   end
 
   def valid_rotation?
-    if @iiif[:rotation].is_a? String
+    if @iiif[:rotation][:degrees].is_a? String
       false
     else
       true
