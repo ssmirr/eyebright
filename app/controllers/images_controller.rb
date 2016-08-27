@@ -1,11 +1,11 @@
 class ImagesController < ApplicationController
 
-  before_filter :validate_request, only: [:show]
+  before_action :validate_request, only: [:show]
 
   def show
     jp2_filepath = Resolver.path(params[:id])
     if File.exist? jp2_filepath
-      extractor = Extractor.new(request.original_url, params)
+      extractor = Extractor.new(request.path, params)
       image_path = extractor.extract
 
       if File.size? image_path
@@ -15,10 +15,10 @@ class ImagesController < ApplicationController
 
         send_file image_cache_file_path, type: Mime::Type.lookup_by_extension(params[:format]), disposition: 'inline'
       else
-        render nothing: true, status: 500
+        head 500
       end
     else
-      render nothing: true, status: 404
+      head 404
     end
   end
 
@@ -72,9 +72,9 @@ class ImagesController < ApplicationController
   end
 
   def validate_request
-    validator = IiifRequestValidator.new(request.original_url)
+    validator = IiifRequestValidator.new(request.path)
     if !validator.valid?
-      render nothing: true, status: 400
+      head 400
       return
     end
   end

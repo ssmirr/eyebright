@@ -77,10 +77,17 @@ class Informer
       ],
       protocol: 'http://iiif.io/api/image',
       profile: [
-        "http://iiif.io/api/image/2/level1.json"
+        "http://iiif.io/api/image/2/level2.json",
+        profile_description
       ],
       '@id' => info_id,
-      '@context' => 'http://iiif.io/api/image/2/context.json'
+      '@context' => [
+        'http://iiif.io/api/image/2/context.json',
+        { ronallo: "http://ronallo.com/ns/",
+          gravityBangs: {
+            "@id" => "ronallo:gravityBangsFeature",
+            "@type" => "iiif:Feature" }
+        }]
     }
     # Cache the info doc now. We do the caching here so that it gets cached
     # whether it is being created via an image or an info.json request.
@@ -132,6 +139,23 @@ class Informer
   def read_info_file
     json = File.read(info_cache_file_path)
     JSON.parse json
+  end
+
+  def profile_description
+    {
+      formats: [:jpg, :png],
+      maxWidth: @width,
+      maxHeight: @height,
+      qualities: [:color, :gray, :bitonal],
+      supports: %w[
+        baseUriRedirect cors
+        regionByPct regionByPx regionSquare
+        mirroring rotationArbitrary rotationBy90s
+        sizeByConfinedWh SizeByDistortedWh
+        sizeByH sizeByPct sizeByW sizeByWh
+        gravityBangs
+      ]
+    }
   end
 
   private
