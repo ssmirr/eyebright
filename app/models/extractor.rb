@@ -165,6 +165,14 @@ class Extractor
   end
 
   def enrich_iiif_params
+    if @iiif[:region].is_a?(Hash) && @iiif[:region].key?(:pctx) && !@iiif[:region].key?(:x)
+      # calculate x,y,w,h and enrich the params with what we find
+      @iiif[:region][:x] = (@informer.width * (@iiif[:region][:pctx]/100)).round
+      @iiif[:region][:y] = (@informer.height * (@iiif[:region][:pcty]/100)).round
+      @iiif[:region][:w] = (@informer.width * (@iiif[:region][:pctw]/100)).round
+      @iiif[:region][:h] = (@informer.height * (@iiif[:region][:pcth]/100)).round
+    end
+
     if square?
       if @informer.width == @informer.height
         # image is square already
