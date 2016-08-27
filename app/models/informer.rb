@@ -64,7 +64,6 @@ class Informer
     create_full_info
   end
 
-  # If we're actually
   def create_full_info
     @iiif_info = {
       width: @width,
@@ -108,6 +107,9 @@ class Informer
     end
   end
 
+  # TODO: Sizes could include sizes from the profile document when those are
+  # for a full region. This would be a hint about images that can be returned
+  # quickly.
   def sizes
     w = @width
     h = @height
