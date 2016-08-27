@@ -1,5 +1,7 @@
 Rails.application.configure do
 
+  config.web_console.whitelisted_ips = '10.0.2.2'
+
   config.middleware.insert_before 0, Rack::Cors do
     allow do
       origins '*'
