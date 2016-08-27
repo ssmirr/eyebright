@@ -207,8 +207,8 @@ class Extractor
         case @iiif[:region]
         when 'square'
           # x will be minus half the height from the centerpoint
-          centerx = (info.width/2).round
-          halfheight = (info.height/2).round
+          centerx = (@informer.width/2).round
+          halfheight = (@informer.height/2).round
           x = centerx - halfheight
         when '!square'
           # top gravity
