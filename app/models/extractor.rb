@@ -111,7 +111,11 @@ class Extractor
     elsif size[:w] && !size[:h]
       "#{size[:w]}"
     elsif size[:w] && size[:h]
-      "#{size[:w]}x#{size[:h]}!"
+      if size[:confined]
+        "#{size[:w]}x#{size[:h]}"
+      else
+        "#{size[:w]}x#{size[:h]}!"
+      end
     end
   end
 
