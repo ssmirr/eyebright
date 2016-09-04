@@ -1,6 +1,9 @@
 # TODO: There could also be an alternative implementation that uses the file's
 # atime to determine whether to delete a file or not, but that might take
 # longer.
+
+# TODO: This currently probably misses some things that are in one profile URL
+# but not in another, but oh well close enough for now.
 class CachePruner
 
   def initialize(profiles)
@@ -25,6 +28,7 @@ class CachePruner
     # clear out regions first
     Dir.glob(id_directory + '/*').each do |region_dir|
       region = File.basename region_dir
+      next if region == 'info.json'
       puts "#{id}/#{region}"
       if @regions.any?{|r| r == region}
         Dir.glob(region_dir + '/*').each do |size_dir|
