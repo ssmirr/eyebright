@@ -17,7 +17,7 @@ class CachePruner
   # TODO: This could probably be a nice recursive method, but oh well.
   def prune_all
     # find all the identifiers and iterate over them
-    Dir.glob(cache_glob).each do |id_directory|
+    Dir.glob(cache_glob).sort.each do |id_directory|
       prune(id_directory)
     end
   end
