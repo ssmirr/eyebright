@@ -83,6 +83,8 @@ class CachePruner
   end
 
   def cache_directory
+    # On deploy public/iiif should be a symlink to where the cache actually
+    # lives in order to persist across deploys.
     File.join Rails.root, 'public/iiif'
   end
 
