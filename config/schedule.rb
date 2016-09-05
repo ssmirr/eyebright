@@ -19,9 +19,6 @@
 
 # Learn more: http://github.com/javan/whenever
 
-set :output,
-
-# every 1.minute do
 every :sunday, at: '3 am' do
   rake 'iiifis:prune_all', output: { error: '~/iiifis-prune-all-error.log', standard: '~/iiifis-prune-all-standard.log' }
 end
