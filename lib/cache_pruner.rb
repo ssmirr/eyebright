@@ -78,7 +78,7 @@ class CachePruner
   end
 
   def delete(directory)
-    puts "delete: #{directory}"
+    puts "delete #{DateTime.now}: #{directory}"
     FileUtils.rm_rf directory
   end
 
