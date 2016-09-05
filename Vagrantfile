@@ -18,6 +18,18 @@ Vagrant.configure(2) do |config|
   config.vm.network "forwarded_port", guest: 8983, host: 8984,
       auto_correct: true
 
+  # https://github.com/kierate/vagrant-port-forwarding-info
+  # vagrant plugin install vagrant-triggers
+  # Get the port details in these cases:
+  # - after "vagrant up" and "vagrant resume"
+  config.trigger.after [:up, :resume] do
+    run "#{File.dirname(__FILE__)}/get-ports.sh #{@machine.id}"
+  end
+  # - before "vagrant ssh"
+  config.trigger.before :ssh do
+    run "#{File.dirname(__FILE__)}/get-ports.sh #{@machine.id}"
+  end
+
 
   config.vm.provider "virtualbox" do |vb|
     vb.linked_clone = true
