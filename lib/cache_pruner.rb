@@ -3,7 +3,9 @@
 # longer.
 
 # TODO: This currently probably misses some things that are in one profile URL
-# but not in another, but oh well close enough for now.
+# but not in another, but oh well close enough for now. What we need to do is
+# check whether the whole path from a profile matches which will result in
+# pruning more documents.
 class CachePruner
 
   def initialize(profiles)
@@ -24,20 +26,20 @@ class CachePruner
 
   def prune(id_directory)
     id = File.basename id_directory
-    puts id
+    # puts id
     # clear out regions first
     Dir.glob(id_directory + '/*').each do |region_dir|
       region = File.basename region_dir
       next if region == 'info.json'
-      puts "#{id}/#{region}"
+      # puts "#{id}/#{region}"
       if @regions.any?{|r| r == region}
         Dir.glob(region_dir + '/*').each do |size_dir|
           size = File.basename size_dir
-          puts "#{id}/#{region}/#{size}"
+          # puts "#{id}/#{region}/#{size}"
           if @sizes.any?{|s| s == size}
             Dir.glob(size_dir + '/*').each do |rotation_dir|
               rotation = File.basename rotation_dir
-              puts "#{id}/#{region}/#{size}/#{rotation}"
+              # puts "#{id}/#{region}/#{size}/#{rotation}"
               if @rotations.any?{|r| r == rotation}
                 Dir.glob(rotation_dir + '/*').each do |filename_dir|
                   filename = File.basename filename_dir
@@ -76,7 +78,7 @@ class CachePruner
   end
 
   def delete(directory)
-    puts "Deleting #{directory}"
+    puts "delete: #{directory}"
     FileUtils.rm_rf directory
   end
 
