@@ -1,8 +1,12 @@
-# iiif-image-server
+# Eyebright
 
 Rails IIIF image server.
 
-The intention is for this image server to be deployed behind Passenger (Apache or nginx). All of the cached file paths follow the the IIIF URL pattern. This allows for caching image and info.json files to the public directory and having them served up directly by the web server instead of those requests hitting the application. In many cases public/iiif will be a symlink to bulk storage mounted to the server.
+> Eyebright is a traditional medicinal herb used to relieve eye strain.
+
+## Why another IIIF Image server?
+
+The intention is for this image server to be deployed behind Passenger. All of the cached file paths follow the the IIIF URL pattern. This allows for caching image and info.json files to the public directory of the application and having them served up directly by the web server (Apache or nginx) instead of those requests hitting the application. In many cases public/iiif will be a symlink to bulk storage mounted to the server.
 
 In addition the cache can be cleared based on a profile which lists the IIIF URL paths that ought to be kept in the cache longer term. This allows the image server to function more like a just in time static site generator for commonly used images.
 
@@ -10,7 +14,7 @@ The other level of caching is for image information. This cache is done in Memca
 
 ## Status
 
-This image server should pass the [IIIF Image API Validator](http://iiif.io/api/image/validator/results/?server=https%3A%2F%2Fiiif.lib.ncsu.edu&prefix=iiif&identifier=67352ccc-d1b0-11e1-89ae-279075081939&version=2.0&level=2&id_squares=on&info_json=on&id_basic=on&id_error_escapedslash=on&id_error_unescaped=on&id_escaped=on&id_error_random=on&region_error_random=on&region_pixels=on&region_percent=on&size_region=on&size_error_random=on&size_ch=on&size_wc=on&size_percent=on&size_bwh=on&size_wh=on&rot_error_random=on&rot_region_basic=on&rot_full_basic=on&quality_error_random=on&quality_color=on&quality_bitonal=on&quality_grey=on&format_jpg=on&format_error_random=on&format_png=on&jsonld=on&baseurl_redirect=on&cors=on) version 2.0 at level 2. (Note that as of this writing the bitonal test seems to be broken and the check image information test should be more permissive.)
+This image server should pass the [IIIF Image API Validator](http://iiif.io/api/image/validator/results/?server=https%3A%2F%2Fiiif.lib.ncsu.edu&prefix=iiif&identifier=67352ccc-d1b0-11e1-89ae-279075081939&version=2.0&level=2&id_squares=on&info_json=on&id_basic=on&id_error_escapedslash=on&id_error_unescaped=on&id_escaped=on&id_error_random=on&region_error_random=on&region_pixels=on&region_percent=on&size_region=on&size_error_random=on&size_ch=on&size_wc=on&size_percent=on&size_bwh=on&size_wh=on&rot_error_random=on&rot_region_basic=on&rot_full_basic=on&quality_error_random=on&quality_color=on&quality_bitonal=on&quality_grey=on&format_jpg=on&format_error_random=on&format_png=on&jsonld=on&baseurl_redirect=on&cors=on) version 2.0 at level 2. (Note that as of this writing the bitonal test seems to be broken and I believe the check image information test should be more permissive regarding allowing multiple profiles.)
 
 It is used in production at NCSU Libraries on the [Rare and Unique Digital Collections](http://d.lib.ncsu.edu/collections) site as well as others.
 
@@ -31,7 +35,7 @@ Currently there is a very simple resolver in `app/models/resolver.rb` that in de
 
 ## Requirements
 
-See the `ansible` directory for all the requirements for running the application in Vagrant. This ought to give you a good start at how to install this on your own servers.
+See the `ansible` directory for all the requirements for running the application in Vagrant. This ought to give you a good start at how to install this on your own servers. We use this basic template for provisioning staging and production machines for this application.
 
 ## Configuration
 
@@ -50,11 +54,11 @@ Since the cache is on the filesystem, clearing the cache is just a matter of ide
 
 You will need to define a constant `IIIF_PROFILE` with a list of matching paths (from the region on) that you want to keep in your cache. You can look in `config/initializers/iiif_profile.rb` for an example.
 
-`bin/rake iiifis:image_cache:prune_all`
+`bin/rake eyebright:image_cache:prune_all`
 
 You can also prune the cache for just a single identifier:
 
-`bin/rake iiifis:image_cache:prune[IDENTIFIER]`
+`bin/rake eyebright:image_cache:prune[IDENTIFIER]`
 
 ## Managing the in-memory information cache
 
@@ -62,7 +66,7 @@ The cache is constrained by the memory limits put on Memcached so it functions a
 
 To clear Memcached you can run this rake task:
 
-`bin/rake iiifis:info_cache:flush`
+`bin/rake eyebright:info_cache:flush`
 
 But all this really does is run: `MDC.flush`
 

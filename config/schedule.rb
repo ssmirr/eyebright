@@ -20,5 +20,5 @@
 # Learn more: http://github.com/javan/whenever
 
 every :sunday, at: '3 am' do
-  rake 'iiifis:prune_all', output: { error: '~/iiifis-prune-all-error.log', standard: '~/iiifis-prune-all-standard.log' }
+  rake 'eyebright:prune_all', output: { error: '~/eyebright-prune-all-error.log', standard: '~/eyebright-prune-all-standard.log' }
 end

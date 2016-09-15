@@ -1,4 +1,4 @@
-namespace :iiifis do
+namespace :eyebright do
 
   desc 'prune all the file cache based on a profile'
   task :prune_all => :environment do
@@ -9,7 +9,7 @@ namespace :iiifis do
   desc 'prune for single identifier'
   task :prune, [:id] => :environment do |t, args|
     if !args[:id]
-      puts 'bin/rake iiifis:prune[IDENTIFIER]'
+      puts 'bin/rake eyebright:prune[IDENTIFIER]'
       exit
     end
     cp = CachePruner.new(IIIF_PROFILE)
