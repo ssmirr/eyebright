@@ -94,6 +94,21 @@ That site states:
 
 > Copyright is owned by NewSouth Innovations Pty Limited, commercial arm of the UNSW Australia in Sydney. **You are free to trial these executables and even to re-distribute them, so long as such use or re-distribution is accompanied with this copyright notice and is not for commercial gain. Note: Binaries can only be used for non-commercial purposes.** If in doubt please contact the Kakadu Team at info@kakadusoftware.com.
 
+## Test Images
+
+So that you do not get bored during development of Eyebright, a number of fairly high resolution images have been included as JP2s in `test/images`. All the test images are from Unsplash. Following are the list of filenames given to the images linked to the original:
+
+- ![river](https://unsplash.com/photos/qQC8tyG_JVA)
+- ![pages](https://unsplash.com/photos/Oaqk7qqNh_c)
+- ![craters](https://unsplash.com/photos/jYBy2HCUve0)
+- ![hubble](https://unsplash.com/photos/rTZW4f02zY8)
+- ![nz](https://unsplash.com/photos/qH36EgNjPJY)
+- ![field](https://unsplash.com/photos/DDp-gC81V0w)
+- ![waterfall](https://unsplash.com/photos/VB-w_3dnyvI)
+- ![bookshelf](https://unsplash.com/photos/cJCQKSP2WC4)
+- ![bookstore](https://unsplash.com/photos/o4-YyGi5JBc)
+- ![maps](https://unsplash.com/photos/1-29wyvvLJA)
+
 ## Authors
 
 - Jason Ronallo
