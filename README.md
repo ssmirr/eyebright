@@ -1,6 +1,6 @@
 # Eyebright
 
-Rails IIIF image server.
+Rails [IIIF](http://iiif.io/) [image server](iiif.io/api/image/).
 
 > Eyebright is a traditional medicinal herb used to relieve eye strain.
 
