@@ -29,9 +29,13 @@ cd /vagrant
 bundle
 ```
 
-Currently there is a very simple resolver in `app/models/resolver.rb` that in development expects to find JPEG2000 files in `./tmp/jp2s`. Add some JP2s there and then you ought to be able to see an image at: <https://localhost:8444/iiif/IDENTIFIER/full/pct:20/0/default.jpg>
+Currently there is a very simple resolver in `app/models/resolver.rb` that in development expects to find JPEG2000 files in `./tmp/jp2s`. Add some JP2s there and then you ought to be able to see an image at: <https://localhost:8444/iiif/hubble/full/pct:20/0/default.jpg>
 
- #TODO:0 Provide some test images for quicker start.
+You can see a list of JPEG2000 images that are included in the development environment below.
+
+For convenience of testing images, there is a OpenSeadragon pan/zoom viewer. It can be reached at a URL like:
+
+<https://localhost:8444/iiif/hubble/view>
 
 ## Requirements
 
@@ -108,6 +112,15 @@ So that you do not get bored during development of Eyebright, a number of fairly
 - ![bookshelf](https://unsplash.com/photos/cJCQKSP2WC4)
 - ![bookstore](https://unsplash.com/photos/o4-YyGi5JBc)
 - ![maps](https://unsplash.com/photos/1-29wyvvLJA)
+
+These are the parameters that were used to create these images:
+
+```sh
+kdu_compress -rate 0.5 -precise Clevels=6 "Cblk={64,64}" -jp2_space sRGB \
+  Cuse_sop=yes Cuse_eph=yes Corder=RLCP ORGgen_plt=yes ORGtparts=R \
+  "Stiles={1024,1024}" -double_buffering 10  -num_threads 4 \
+  Creversible=no -no_weights  -i river.tif -o river.jp2
+```
 
 ## Authors
 
