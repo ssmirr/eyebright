@@ -139,7 +139,7 @@ The following image qualities are available in addition to those specified in th
 - dither
 - pixelized
 - negative
-- paint (Only turned on )
+- paint (Only turned on in development because it is slow.)
 
 To turn these features on for a particular environment change the value of the "fun" key to `true`.
 
