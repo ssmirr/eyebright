@@ -68,6 +68,11 @@ class Extractor
 
   def convert_cmd
     cmd = "convert #{@temp_out_image.path} "
+
+    if @iiif[:quality] == 'pixelized'
+      cmd << ' -scale 10% -scale 1000%'
+    end
+
     if convert_resize
       cmd << " -resize #{convert_resize} "
     end
@@ -90,12 +95,15 @@ class Extractor
     end
 
     case @iiif[:quality]
-      when 'gray'
-        cmd << ' -colorspace Gray'
-      when 'bitonal'
-        cmd << ' -colorspace Gray'
-        cmd << ' -type Bilevel'
-      end
+    when 'gray'
+      cmd << ' -colorspace Gray'
+    when 'bitonal'
+      cmd << ' -colorspace Gray'
+      cmd << ' -type Bilevel'
+    when 'dither'
+      # TODO: add other dither options
+      cmd << ' -dither FloydSteinberg -colors 8'
+    end
 
     cmd << " #{@temp_response_image.path}"
     puts cmd

@@ -5151,7 +5151,7 @@ $.EventSource.prototype = {
             touchCount = event.changedTouches.length,
             gPoints = [],
             pointsList = tracker.getActivePointersListByType( 'touch' );
-        
+
         abortTouchContacts( tracker, event, pointsList );
     }
 
@@ -6207,7 +6207,7 @@ $.EventSource.prototype = {
             } );
         }
     }
-    
+
     // True if inside an iframe, otherwise false.
     // @member {Boolean} isInIframe
     // @private
@@ -6219,7 +6219,7 @@ $.EventSource.prototype = {
             return true;
         }
     })();
- 
+
     // @function
     // @private
     // @inner
@@ -6895,6 +6895,8 @@ $.Viewer = function( options ) {
         $.extend( true, options, options.config );
         delete options.config;
     }
+
+    $.eyebright_mode = options.eyebright_mode;
 
     //Public properties
     //Allow the options object to override global defaults
@@ -12026,11 +12028,11 @@ $.IIIFTileSource = function( options ){
             options.tileSize = shortDim;
         }
     } else if (this.sizes && this.sizes.length > 0) {
-        // This info.json can't be tiled, but we can still construct a legacy pyramid from the sizes array. 
-        // In this mode, IIIFTileSource will call functions from the abstract baseTileSource or the 
-        // LegacyTileSource instead of performing IIIF tiling.      
+        // This info.json can't be tiled, but we can still construct a legacy pyramid from the sizes array.
+        // In this mode, IIIFTileSource will call functions from the abstract baseTileSource or the
+        // LegacyTileSource instead of performing IIIF tiling.
         this.emulateLegacyImagePyramid = true;
-        
+
         options.levels = constructLevels( this );
         // use the largest available size to define tiles
         $.extend( true, options, {
@@ -12065,7 +12067,7 @@ $.extend( $.IIIFTileSource.prototype, $.TileSource.prototype, /** @lends OpenSea
      * @param {Object|Array} data
      * @param {String} optional - url
      */
-     
+
     supports: function( data, url ) {
         // Version 2.0 and forwards
         if (data.protocol && data.protocol == 'http://iiif.io/api/image') {
@@ -12272,7 +12274,9 @@ $.extend( $.IIIFTileSource.prototype, $.TileSource.prototype, /** @lends OpenSea
              this['@context'].indexOf('/1/context.json') > -1 ) {
             iiifQuality = "native.jpg";
         } else {
-            iiifQuality = "default.jpg";
+            // YKK
+            // iiifQuality = "default.jpg";
+            iiifQuality = $.eyebright_mode + ".jpg";
         }
 
         if ( levelWidth < tileWidth && levelHeight < tileHeight ){

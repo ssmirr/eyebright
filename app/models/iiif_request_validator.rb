@@ -40,7 +40,7 @@ class IiifRequestValidator
   end
 
   def valid_quality?
-    ['default', 'color', 'gray', 'bitonal'].any?{|q| q == @iiif[:quality]}
+    ['default', 'color', 'gray', 'bitonal', 'dither', 'pixelized'].any?{|q| q == @iiif[:quality]}
   end
 
   def valid_format?
