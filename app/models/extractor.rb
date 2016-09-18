@@ -103,6 +103,10 @@ class Extractor
     when 'dither'
       # TODO: add other dither options
       cmd << ' -dither FloydSteinberg -colors 8'
+    when 'negative'
+      cmd << ' -negate'
+    when 'paint'
+      cmd << ' -paint 5'
     end
 
     cmd << " #{@temp_response_image.path}"

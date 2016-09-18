@@ -39,8 +39,19 @@ class IiifRequestValidator
     end
   end
 
+  def valid_qualities
+    qualities = ['default', 'color', 'gray', 'bitonal']
+    if Rails.configuration.eyebright['fun']
+      qualities += ['dither', 'pixelized', 'negative']
+      if Rails.env == 'development'
+        qualities += ['paint'] # This is really slow
+      end
+    end
+    qualities
+  end
+
   def valid_quality?
-    ['default', 'color', 'gray', 'bitonal', 'dither', 'pixelized'].any?{|q| q == @iiif[:quality]}
+    valid_qualities.any?{|q| q == @iiif[:quality]}
   end
 
   def valid_format?
