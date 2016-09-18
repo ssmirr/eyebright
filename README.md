@@ -31,11 +31,18 @@ bundle
 
 Currently there is a very simple resolver in `app/models/resolver.rb` that in development expects to find JPEG2000 files in `./tmp/jp2s`. Add some JP2s there and then you ought to be able to see an image at: <https://localhost:8444/iiif/hubble/full/pct:20/0/default.jpg>
 
-You can see a list of JPEG2000 images that are included in the development environment below.
+Note, you will have to accept the self-signed certificate to use the version deployed behind Apache and Passenger. If you would like to do development on Eyebright (or avoid accepting the self-signed cert), you will want to run a development server like this:
 
-For convenience of testing images, there is a OpenSeadragon pan/zoom viewer. It can be reached at a URL like:
+```
+vagrant ssh
+cd /vagrant
+bundle
+bin/rails s -b 0.0.0.0
+```
 
-<https://localhost:8444/iiif/hubble/view>
+Then on the host machine you can visit <http://localhost:8090/iiif/river/full/600,/0/default.jpg>. And change all the following URLs to "http://localhost:8090".
+
+You can see a list of JPEG2000 images that are included in the development environment below. For convenience of testing images, there is a OpenSeadragon pan/zoom viewer. It can be reached at a URL like: <https://localhost:8444/iiif/hubble/view>
 
 ## Requirements
 
@@ -44,6 +51,7 @@ See the `ansible` directory for all the requirements for running the application
 ## Configuration
 
 On deploy to staging and production the following files in the config directory will need to be updated:
+- eyebright.yml
 - secrets.yml
 - initializers/iiif_profile.rb
 - initializers/iiif_url.rb
@@ -62,7 +70,7 @@ You will need to define a constant `IIIF_PROFILE` with a list of matching paths 
 
 You can also prune the cache for just a single identifier:
 
-`bin/rake eyebright:image_cache:prune[IDENTIFIER]`
+`bin/rake eyebright:image_cache:prune[river]`
 
 ## Managing the in-memory information cache
 
@@ -87,9 +95,11 @@ Naming these other commonly used square regions consistently means that determin
 
 You can visit URLs like this to see it in action:
 
-- <https://localhost:8444/iiif/IDENTIFIER/square/200,/0/default.jpg>
-- <https://localhost:8444/iiif/IDENTIFIER/!square/200,/0/default.jpg>
-- <https://localhost:8444/iiif/IDENTIFIER/square!/200,/0/default.jpg>
+- <https://localhost:8444/iiif/river/square/200,/0/default.jpg>
+- <https://localhost:8444/iiif/river/!square/200,/0/default.jpg>
+- <https://localhost:8444/iiif/river/square!/200,/0/default.jpg>
+
+See below for other fun extensions.
 
 ## Kakadu Copyright Notice and Disclaimer
  We do not distribute the Kakadu executables. You will need to install the Kakadu binaries/executables available [here](http://kakadusoftware.com/downloads/). The executables available there are made available for demonstration purposes only. Neither the author, Dr. Taubman, nor UNSW Australia accept any liability arising from their use or re-distribution.
@@ -121,6 +131,21 @@ kdu_compress -rate 0.5 -precise Clevels=6 "Cblk={64,64}" -jp2_space sRGB \
   "Stiles={1024,1024}" -double_buffering 10  -num_threads 4 \
   Creversible=no -no_weights  -i river.tif -o river.jp2
 ```
+
+## Fun
+
+The following image qualities are available in addition to those specified in the standard:
+
+- dither
+- pixelized
+- negative
+- paint (Only turned on )
+
+To turn these features on for a particular environment change the value of the "fun" key to `true`.
+
+These qualities also work (with variable success) in the embedded pan/zoom viewer like so:
+
+<https://localhost:8444/iiif/river/view?eyebright_mode=pixelized>
 
 ## Authors
 
