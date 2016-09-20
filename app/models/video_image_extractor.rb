@@ -14,10 +14,14 @@ class VideoImageExtractor
   end
 
   def get_informer
-    raw_info = `ffprobe -v error -show_entries stream=width,height -of default=noprint_wrappers=1 #{@path}`
-    width = raw_info.match(/width=(.*)\n/)[1].to_i
-    height = raw_info.match(/height=(.*)\n/)[1].to_i
-    @informer = OpenStruct.new height: height, width: width
+    mc_info = MDC.get "video:#{@params[:id]}"
+    if mc_info
+      Rails.logger.info "Memcached Hit #{@params[:id]}"
+      @informer = OpenStruct.new mc_info
+    else
+      @informer = VideoInformer.new @params[:id]
+      @informer.inform
+    end
   end
 
   def extract

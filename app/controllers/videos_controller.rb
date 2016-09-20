@@ -22,6 +22,25 @@ class VideosController < ApplicationController
     end
   end
 
+  def info
+    # If this route is hit then the info.json is not cached to the filesystem.
+    # The informer takes the fastest path to getting the information.
+    @informer = VideoInformer.new params[:id]
+    @informer.inform
+    id_url = File.join("#{request.protocol}#{request.host_with_port}", 'iiifv', params[:id])
+
+    content_type = if request.format.to_s == 'application/ld+json'
+      'application/ld+json'
+    else
+      'application/json'
+    end
+
+    json = @informer.iiif_info.to_json
+    render json: json, content_type: content_type
+  end
+
+  private
+
   def identifier_directory
     File.join Rails.root, "public/iiifv/#{params[:id]}"
   end
@@ -34,47 +53,8 @@ class VideosController < ApplicationController
     File.join(image_cache_directory, "#{params[:quality]}.#{params[:format]}")
   end
 
-  # def info
-  #   # If this route is hit then the info.json is not cached to the filesystem.
-  #   # The informer takes the fastest path to getting the information.
-  #   @informer = Informer.new params[:id]
-  #   @informer.inform
-  #   id_url = File.join("#{request.protocol}#{request.host_with_port}", 'iiif', params[:id])
-  #
-  #   # TODO: find a way where this header only gets set once even behind Apache
-  #   # headers['Access-Control-Allow-Origin'] = '*'
-  #   # headers['Access-Control-Allow-Methods'] = 'POST, PUT, DELETE, GET, OPTIONS'
-  #   # headers['Access-Control-Request-Method'] = '*'
-  #   # headers['Access-Control-Allow-Headers'] = 'Origin, X-Requested-With, Content-Type, Accept, Authorization'
-  #
-  #   content_type = if request.format.to_s == 'application/ld+json'
-  #     'application/ld+json'
-  #   else
-  #     'application/json'
-  #   end
-  #
-  #   json = @informer.iiif_info.to_json
-  #   render json: json, content_type: content_type
-  # end
-  #
-  # def view
-  #   @info_json_url = File.join IiifUrl.base_url, params[:id], 'info.json'
-  # end
 
-  private
 
-  # def identifier_directory
-  #   File.join Rails.root, "public/iiif/#{params[:id]}"
-  # end
-  #
-  # def image_cache_directory
-  #   File.join(identifier_directory, "/#{params[:region]}/#{params[:size]}/#{params[:rotation]}")
-  # end
-  #
-  # def image_cache_file_path
-  #   File.join(image_cache_directory, "#{params[:quality]}.#{params[:format]}")
-  # end
-  #
   # def info_cache_directory
   #   identifier_directory
   # end
