@@ -50,7 +50,8 @@ class VideoInformer
       'comments' => [
         '"sizes" not yet implemented',
         'Does "tiles" make sense?',
-        'What "supports" might be different for a video?'
+        'What "supports" might be different for a video?',
+        'Maybe specify available times or available frames for still images?'
       ]
     }
     FileUtils.mkdir_p identifier_directory
