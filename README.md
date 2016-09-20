@@ -132,6 +132,10 @@ kdu_compress -rate 0.5 -precise Clevels=6 "Cblk={64,64}" -jp2_space sRGB \
   Creversible=no -no_weights  -i river.tif -o river.jp2
 ```
 
+## Experiments
+
+See `EXPERIMENTS.md` for documentation on experimental support for extracting still images from a video.
+
 ## Fun
 
 The following image qualities are available in addition to those specified in the standard:

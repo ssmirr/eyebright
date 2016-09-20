@@ -19,6 +19,9 @@
   roles:
     # sudo service firewalld stop
     - role: basic-setup
+    - role: ffmpeg
+      build_dir: /home/vagrant/ffmpeg_build
+      source_dir: /home/vagrant/ffmpeg_sources
     - role: dev-dummy-cert
     - role: dev-link-opt-rails
     - role: jp2

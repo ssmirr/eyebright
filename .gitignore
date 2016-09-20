@@ -22,6 +22,10 @@
 
 # Ignore /iiif
 public/iiif
+public/iiifv
 
 .imdone
 .vagrant
+
+# Ignore some video files
+test/videos/camels.mp4
