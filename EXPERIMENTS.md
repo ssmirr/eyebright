@@ -4,7 +4,7 @@ Documentation for experiments for non-standard IIIF APIs.
 
 ## Video Stills
 
-This image server includes experimental support for extracting still images from a video.
+This image server includes experimental support for extracting still images from a video. Note that info.json is not yet implemented.
 
 If you have the development server running you can visit:
 <http://localhost:8090/iiifv/water/8/full/600,/0/default.jpg>
