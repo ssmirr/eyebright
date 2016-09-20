@@ -6,6 +6,10 @@ Documentation for experiments for non-standard IIIF APIs.
 
 This image server includes experimental support for extracting still images from a video. Note that info.json is not yet implemented.
 
+You can see the sample videos here:
+<https://github.com/NCSU-Libraries/eyebright/tree/master/test/videos>
+No attempt is made yet to serve the actual video file but just still images from the video.
+
 If you have the development server running you can visit:
 <http://localhost:8090/iiifv/water/8/full/600,/0/default.jpg>
 
