@@ -43,6 +43,7 @@ class VideoInformer
     @iiif_info = {
       width: @width,
       height: @height,
+      duration: @duration,
       protocol: 'http://iiif.io/api/video',
       profile: ["http://iiif.io/api/video/0/level-1.json"],
       '@id' => info_id,
