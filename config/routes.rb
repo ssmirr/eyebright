@@ -11,6 +11,7 @@ Rails.application.routes.draw do
   # Experimental Video API
   video_prefix = 'iiifv'
   match "#{video_prefix}/:id/:time/:region/:size/:rotation/:quality.:format", to: 'videos#show', via: [:get, :head]
+  match "#{video_prefix}/:id/:time/info.json", to: 'videos#image_info', via: [:get, :head]
   # info.json for the video
   match "#{video_prefix}/:id/info.json", to: 'videos#info', via: [:get, :head]
   get "#{video_prefix}/:id", to: redirect("#{video_prefix}/%{id}/info.json")

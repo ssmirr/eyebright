@@ -27,7 +27,6 @@ class VideosController < ApplicationController
     # The informer takes the fastest path to getting the information.
     @informer = VideoInformer.new params[:id]
     @informer.inform
-    id_url = File.join("#{request.protocol}#{request.host_with_port}", 'iiifv', params[:id])
 
     content_type = if request.format.to_s == 'application/ld+json'
       'application/ld+json'
@@ -35,6 +34,19 @@ class VideosController < ApplicationController
       'application/json'
     end
 
+    json = @informer.iiif_info.to_json
+    render json: json, content_type: content_type
+  end
+
+  def image_info
+    @informer = VideoStillInformer.new params[:id], params[:time]
+    @informer.inform
+
+    content_type = if request.format.to_s == 'application/ld+json'
+      'application/ld+json'
+    else
+      'application/json'
+    end
     json = @informer.iiif_info.to_json
     render json: json, content_type: content_type
   end

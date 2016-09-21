@@ -79,6 +79,15 @@ class VideoInformer
 
   private
 
+  def parse_info_file
+    @iiif_info = read_info_file
+    @width = @iiif_info['width']
+    @height = @iiif_info['height']
+    @duration = @iiif_info['duration']
+    @frames = @iiif_info['frames']
+    # @scale_factors = @iiif_info['tiles'][0]['scaleFactors']
+  end
+
   def read_info_file
     json = File.read(info_cache_file_path)
     JSON.parse json
