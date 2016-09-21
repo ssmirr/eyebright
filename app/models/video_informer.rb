@@ -1,6 +1,6 @@
 class VideoInformer
 
-  attr_reader :height, :width, :duration
+  attr_reader :ffmpeg_info, :height, :width, :duration, :frames
 
   def initialize(id)
     @id = id
@@ -19,14 +19,23 @@ class VideoInformer
   def get_ffmpeg_info
     Rails.logger.info ffmpeg_info_cmd
     result = `#{ffmpeg_info_cmd}`
-    @width = result.match(/width=(.*)\n/)[1].to_i
-    @height = result.match(/height=(.*)\n/)[1].to_i
-    @duration = result.match(/duration=(.*)\n/)[1].to_f
+    @ffmpeg_info = JSON.parse result
+    video_stream = get_video_stream
+    @width = video_stream['width']
+    @height = video_stream['height']
+    @duration = video_stream['duration']
+    @frames = video_stream['nb_frames']
     create_full_info
   end
 
   def ffmpeg_info_cmd
-    "ffprobe -v error -show_entries stream=width,height,duration -of default=noprint_wrappers=1 #{@path}"
+    "ffprobe -v error -print_format json -show_format -show_streams #{@path}"
+  end
+
+  def get_video_stream
+    @ffmpeg_info['streams'].find do |stream|
+      stream['codec_type'] == 'video'
+    end
   end
 
   def iiif_info
@@ -44,6 +53,7 @@ class VideoInformer
       width: @width,
       height: @height,
       duration: @duration,
+      frames: @frames,
       protocol: 'http://iiif.io/api/video',
       profile: ["http://iiif.io/api/video/0/level-1.json"],
       '@id' => info_id,
