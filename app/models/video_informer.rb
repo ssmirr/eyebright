@@ -87,8 +87,12 @@ class VideoInformer
   # In Memcache we store just enough information for the extractors to use
   # without having to return here for the information.
   def memcache_info
-    MDC.set "video:#{@id}", {width: @width, height: @height, duration: @duration}
+    MDC.set "video:#{@id}", memcache_info_to_store
     Rails.logger.info "Memcache Set #{@id}"
+  end
+
+  def memcache_info_to_store
+    {width: @width, height: @height, duration: @duration, frames: @frames}
   end
 
   def identifier_directory
