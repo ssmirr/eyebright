@@ -10,16 +10,29 @@ Vagrant.configure(2) do |config|
   config.vm.network "private_network", ip: "192.168.33.31"
 
   # sudo ufw allow from 192.168.33.0/24
-  config.vm.synced_folder '.', '/vagrant', nfs: true
+  config.vm.synced_folder '.', '/vagrant', type: 'nfs', mount_options: ['nolock']
 
-  config.vm.network "forwarded_port", guest: 80, host: 8088,
+  config.vm.network "forwarded_port", guest: 80, host: 8089,
       auto_correct: true
   config.vm.network "forwarded_port", guest: 443, host: 8444,
       auto_correct: true
-  config.vm.network "forwarded_port", guest: 3000, host: 8090,
+  config.vm.network "forwarded_port", guest: 3000, host: 8091,
       auto_correct: true
-  config.vm.network "forwarded_port", guest: 8983, host: 8984,
+  config.vm.network "forwarded_port", guest: 8983, host: 8985,
       auto_correct: true
+
+  config.vm.provider "virtualbox" do |vb|
+    vb.linked_clone = true
+    vb.memory = 1024
+    vb.cpus = 1
+  end
+
+  config.vm.provision "ansible" do |ansible|
+    ansible.playbook = 'ansible/development-playbook.yml'
+    ansible.inventory_path = 'ansible/development.ini'
+    ansible.limit = 'all'
+    # ansible.verbose = 'vvvv'
+  end
 
   # https://github.com/kierate/vagrant-port-forwarding-info
   # vagrant plugin install vagrant-triggers
@@ -31,18 +44,6 @@ Vagrant.configure(2) do |config|
   # - before "vagrant ssh"
   config.trigger.before :ssh do
     run "#{File.dirname(__FILE__)}/get-ports.sh #{@machine.id}"
-  end
-
-
-  config.vm.provider "virtualbox" do |vb|
-    vb.linked_clone = true
-  end
-
-  config.vm.provision "ansible" do |ansible|
-    ansible.playbook = 'ansible/development-playbook.yml'
-    ansible.inventory_path = 'ansible/development.ini'
-    ansible.limit = 'all'
-    # ansible.verbose = 'vvvv'
   end
 
   # set auto_update to false, if you do NOT want to check the correct
