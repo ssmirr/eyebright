@@ -39,7 +39,15 @@ class VideoImageExtractor
   def ffmpeg_image_extractor_cmd
     # Use fast input seeking: https://trac.ffmpeg.org/wiki/Seeking
     # TODO: Handle time better. For now just convert to an integer to make sure it is safe
-    "ffmpeg -y -ss #{@params[:time].to_i} -i #{@path} -vframes 1 #{@temp_out_image.path}"
+    "ffmpeg -y -ss #{ffmpeg_time} -i #{@path} -vframes 1 #{@temp_out_image.path}"
+  end
+
+  def ffmpeg_time
+    if @params[:time].match /^(\d\d\:\d\d\:\d\d|\d+)(\.\d+)?$/
+      @params[:time]
+    else
+      @params[:time].to_i
+    end
   end
 
   def full_size_image?
