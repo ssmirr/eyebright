@@ -5,7 +5,7 @@ class VideoImageExtractor
   def initialize(url, params)
     @iiif = IiifUrl.parse url
     @params = params
-    @path = VideoResolver.path @params[:id]
+    @path = VideoResolver.path(@params[:id]) + '.mp4'
     get_informer
     enrich_iiif_params
     # FIXME: pick better temporary images
@@ -27,13 +27,18 @@ class VideoImageExtractor
   def extract
     # Check for full size image first
     if !full_size_image?
-      # TODO: Handle time better. For now just convert to an integer to make sure it is safe
-      `ffmpeg -y -i #{@path} -ss #{@params[:time].to_i} -vframes 1 #{@temp_out_image.path}`
+      Rails.logger.info ffmpeg_image_extractor_cmd
+      `#{ffmpeg_image_extractor_cmd}`
       FileUtils.mkdir_p full_size_image_directory
       FileUtils.cp @temp_out_image.path, full_size_image_path
     end
     `#{convert_cmd}`
     @temp_response_image
+  end
+
+  def ffmpeg_image_extractor_cmd
+    # TODO: Handle time better. For now just convert to an integer to make sure it is safe
+    "ffmpeg -y -i #{@path} -ss #{@params[:time].to_i} -vframes 1 #{@temp_out_image.path}"
   end
 
   def full_size_image?

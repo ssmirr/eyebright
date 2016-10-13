@@ -3,7 +3,7 @@ class VideosController < ApplicationController
   # before_action :validate_request, only: [:show]
 
   def show
-    video_filepath = VideoResolver.path(params[:id])
+    video_filepath = VideoResolver.path(params[:id]) + '.mp4'
     if File.exist? video_filepath
       extractor = VideoImageExtractor.new(request.path, params)
       image_path = extractor.extract
@@ -25,7 +25,7 @@ class VideosController < ApplicationController
   def info
     # If this route is hit then the info.json is not cached to the filesystem.
     # The informer takes the fastest path to getting the information.
-    @informer = VideoInformer.new params[:id]
+    @informer = VideoInformer.new params[:id], request.base_url
     @informer.inform
 
     content_type = if request.format.to_s == 'application/ld+json'

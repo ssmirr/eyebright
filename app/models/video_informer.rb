@@ -2,8 +2,9 @@ class VideoInformer
 
   attr_reader :ffmpeg_info, :height, :width, :duration, :frames
 
-  def initialize(id)
+  def initialize(id, base_url)
     @id = id
+    @base_url = base_url
     @path = VideoResolver.path(id)
   end
 
@@ -11,30 +12,15 @@ class VideoInformer
     if File.exist? info_cache_file_path
       parse_info_file
     else
-      get_ffmpeg_info
+      @ffmpeg_info = get_ffmpeg_info
+      create_full_info
     end
     memcache_info
   end
 
   def get_ffmpeg_info
-    Rails.logger.info ffmpeg_info_cmd
-    result = `#{ffmpeg_info_cmd}`
-    @ffmpeg_info = JSON.parse result
-    video_stream = get_video_stream
-    @width = video_stream['width']
-    @height = video_stream['height']
-    @duration = video_stream['duration']
-    @frames = video_stream['nb_frames']
-    create_full_info
-  end
-
-  def ffmpeg_info_cmd
-    "ffprobe -v error -print_format json -show_format -show_streams #{@path}"
-  end
-
-  def get_video_stream
-    @ffmpeg_info['streams'].find do |stream|
-      stream['codec_type'] == 'video'
+    Dir.glob(@path + '*').map do |video_file|
+      FfmpegInformer.new video_file
     end
   end
 
@@ -42,7 +28,8 @@ class VideoInformer
     if @iiif_info
       @iiif_info
     elsif File.exist? info_cache_file_path
-      read_into_file
+      #read_into_file
+      create_full_info
     else
       create_full_info
     end
@@ -50,33 +37,49 @@ class VideoInformer
 
   def create_full_info
     @iiif_info = {
-      width: @width,
-      height: @height,
-      duration: @duration,
-      frames: @frames,
-      protocol: 'http://iiif.io/api/video',
-      profile: ["http://iiif.io/api/video/0/level-1.json"],
       '@id' => info_id,
+      versions: versions,
+      protocol: 'http://iiif.io/api/video',
+      profile: ["http://iiif.io/api/video/0/level0.json"],
       '@context' => ["http://iiif.io/api/video/0/context.json"],
-      'comments' => [
-        '"sizes" not yet implemented',
-        'Does "tiles" make sense?',
-        'What "supports" might be different for a video?',
-        'Maybe specify available times or available frames for still images?',
-        'Below is a bunch of information ffmpeg can provide.'
-      ],
-      ffmpeg_info: ffmpeg_info
     }
-    FileUtils.mkdir_p identifier_directory
-    File.open(info_cache_file_path, 'w') do |fh|
-      fh.puts @iiif_info.to_json
+    if false # TODO: turn video info.json caching on again
+      FileUtils.mkdir_p identifier_directory
+      File.open(info_cache_file_path, 'w') do |fh|
+        fh.puts @iiif_info.to_json
+      end
     end
     @iiif_info
+  end
+
+  def versions
+    @ffmpeg_info.map do |version|
+      video_file = {
+        "@id" => video_id(version),
+        width: version.width,
+        height: version.height,
+        duration: version.duration,
+        format: version.format,
+        poster: poster_image(version),
+        ffmpeg_info: version.info,
+      }
+      video_file['frames'] = version.frames if version.frames
+      video_file
+    end
   end
 
   def info_id
     # FIXME: this won't work if trailing slash given for base_url setting
     File.join IiifUrl.base_url + 'v', @id
+  end
+
+  def video_id(version)
+    extname = File.extname version.file
+    File.join @base_url, 'videos', @id + extname
+  end
+
+  def poster_image(version)
+    File.join info_id, '0/full/full/0/default.jpg'
   end
 
   private
