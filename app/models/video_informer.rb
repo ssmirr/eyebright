@@ -79,7 +79,7 @@ class VideoInformer
   end
 
   def poster_image(version)
-    File.join info_id, '0/full/full/0/default.jpg'
+    File.join info_id, '2/full/full/0/default.jpg'
   end
 
   private

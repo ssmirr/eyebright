@@ -29,3 +29,4 @@ public/iiifv
 
 # Ignore some video files
 test/videos/camels.mp4
+test/videos/pets*
