@@ -62,8 +62,10 @@ class VideoInformer
         '"sizes" not yet implemented',
         'Does "tiles" make sense?',
         'What "supports" might be different for a video?',
-        'Maybe specify available times or available frames for still images?'
-      ]
+        'Maybe specify available times or available frames for still images?',
+        'Below is a bunch of information ffmpeg can provide.'
+      ],
+      ffmpeg_info: ffmpeg_info
     }
     FileUtils.mkdir_p identifier_directory
     File.open(info_cache_file_path, 'w') do |fh|
