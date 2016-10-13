@@ -89,6 +89,8 @@ class VideoInformer
   def poster_image
     {
       "@id": File.join(info_id, '2/full/full/0/default.jpg'),
+      "@type": "dctypes:Image",
+      "format": "image/jpeg",
       service: {
         "@context": "http://iiif.io/api/image/2/context.json",
         "@id": info_id,
