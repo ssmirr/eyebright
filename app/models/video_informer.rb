@@ -37,8 +37,12 @@ class VideoInformer
 
   def create_full_info
     @iiif_info = {
+      '_comments': [
+        'This is totally not how this should look, but will give some idea of what data we would want about a video and what is possible for extracting from ffmpeg.'
+      ],
       '@id' => info_id,
-      versions: versions,
+      poster: poster_image,
+      sources: sources,
       protocol: 'http://iiif.io/api/video',
       profile: ["http://iiif.io/api/video/0/level0.json"],
       '@context' => ["http://iiif.io/api/video/0/context.json"],
@@ -52,19 +56,23 @@ class VideoInformer
     @iiif_info
   end
 
-  def versions
-    @ffmpeg_info.map do |version|
-      video_file = {
-        "@id" => video_id(version),
-        width: version.width,
-        height: version.height,
-        duration: version.duration,
-        format: version.format,
-        poster: poster_image(version),
-        ffmpeg_info: version.info,
-      }
-      video_file['frames'] = version.frames if version.frames
-      video_file
+  def sources
+    if @sources
+      @sources
+    else
+      @sources = @ffmpeg_info.map do |version|
+        video_file = {
+          "@id" => video_id(version),
+          width: version.width,
+          height: version.height,
+          duration: version.duration,
+          format: version.format,
+
+          ffmpeg_info: version.info,
+        }
+        video_file['frames'] = version.frames if version.frames
+        video_file
+      end
     end
   end
 
@@ -78,8 +86,15 @@ class VideoInformer
     File.join @base_url, 'videos', @id + extname
   end
 
-  def poster_image(version)
-    File.join info_id, '2/full/full/0/default.jpg'
+  def poster_image
+    {
+      "@id": File.join(info_id, '2/full/full/0/default.jpg'),
+      service: {
+        "@context": "http://iiif.io/api/image/2/context.json",
+        "@id": info_id,
+        profile: "http://iiif.io/api/image/2/level2.json"
+      }
+    }
   end
 
   private
