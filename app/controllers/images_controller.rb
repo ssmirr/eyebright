@@ -52,7 +52,7 @@ class ImagesController < ApplicationController
   private
 
   def identifier_directory
-    File.join Rails.root, "public/iiifv/#{params[:id]}"
+    File.join Rails.root, "public/iiif/#{params[:id]}"
   end
 
   def image_cache_directory
