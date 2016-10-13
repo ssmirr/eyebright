@@ -93,7 +93,9 @@ class VideoInformer
         "@context": "http://iiif.io/api/image/2/context.json",
         "@id": info_id,
         profile: "http://iiif.io/api/image/2/level2.json"
-      }
+      },
+      width: sources.first[:width],
+      height: sources.first[:height]
     }
   end
 
