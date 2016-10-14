@@ -82,8 +82,8 @@ class VideoInformer
   end
 
   def video_id(version)
-    extname = File.extname version.file
-    File.join @base_url, 'videos', @id + extname
+    basename = File.basename version.file
+    File.join @base_url, 'videos', basename
   end
 
   def poster_image
