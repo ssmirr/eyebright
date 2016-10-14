@@ -46,7 +46,7 @@ class VideoImageExtractor
     if @params[:time].match /^(\d\d\:\d\d\:\d\d|\d+)(\.\d+)?$/
       @params[:time]
     else
-      @params[:time].to_i
+      # TODO: raise an error
     end
   end
 
