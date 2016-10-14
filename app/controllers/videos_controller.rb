@@ -2,8 +2,8 @@ class VideosController < ApplicationController
 
   # before_action :validate_request, only: [:show]
 
-  def show
-    video_filepath = VideoResolver.path(params[:id]) 
+  def show_image
+    video_filepath = VideoResolver.path(params[:id])
     if File.exist? video_filepath
       extractor = VideoImageExtractor.new(request, params)
       image_path = extractor.extract
@@ -39,7 +39,7 @@ class VideosController < ApplicationController
   end
 
   def image_info
-    @informer = VideoStillInformer.new params[:id], params[:time]
+    @informer = VideoStillInformer.new params[:id], request.base_url
     @informer.inform
 
     content_type = if request.format.to_s == 'application/ld+json'
@@ -56,34 +56,16 @@ class VideosController < ApplicationController
 
   private
 
-  def identifier_directory
-    File.join Rails.root, "public/iiifv/#{params[:id]}"
+  def image_identifier_directory
+    File.join Rails.root, "public/iiifvi/#{params[:id]}"
   end
 
   def image_cache_directory
-    File.join(identifier_directory, "/#{params[:time]}/#{params[:region]}/#{params[:size]}/#{params[:rotation]}")
+    File.join(image_identifier_directory, "/#{params[:time]}/#{params[:region]}/#{params[:size]}/#{params[:rotation]}")
   end
 
   def image_cache_file_path
     File.join(image_cache_directory, "#{params[:quality]}.#{params[:format]}")
   end
-
-
-
-  # def info_cache_directory
-  #   identifier_directory
-  # end
-  #
-  # def info_cache_file_path
-  #   File.join info_cache_directory, 'info.json'
-  # end
-  #
-  # def validate_request
-  #   validator = IiifRequestValidator.new(request.path)
-  #   if !validator.valid?
-  #     head 400
-  #     return
-  #   end
-  # end
 
 end

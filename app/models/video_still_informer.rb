@@ -1,9 +1,8 @@
 class VideoStillInformer
 
-  def initialize(id, time)
-    @video_informer = VideoInformer.new id
+  def initialize(id, base_url)
+    @video_informer = VideoInformer.new id, base_url
     @id = id
-    @time = time.to_i
   end
 
   def inform
@@ -16,7 +15,6 @@ class VideoStillInformer
   end
 
   def utilize_video_informer
-    byebug
     @width = @video_informer.width
     @height = @video_informer.height
   end
@@ -36,8 +34,6 @@ class VideoStillInformer
   # TODO: DRY this up with Informer
   def create_full_info
     @iiif_info = {
-      width: @width,
-      height: @height,
       # sizes: sizes,
       # tiles: [
       #   {
@@ -45,12 +41,18 @@ class VideoStillInformer
       #     scaleFactors: @scale_factors
       #   }
       # ],
+      'id' => info_id,
+      within: video_info_id,
+      '_comments': [
+        'How can we say that this is an image server of the type that requires a time segment since it is extracting from a video?',
+        'How can we say that this image server delivers images from within a particular video?'
+      ],
       protocol: 'http://iiif.io/api/image',
       profile: [
         "http://iiif.io/api/image/2/level2.json",
         profile_description
       ],
-      '@id' => info_id,
+
       '@context' => [
         'http://iiif.io/api/image/2/context.json',
         { ronallo: "http://ronallo.com/ns/",
@@ -61,10 +63,11 @@ class VideoStillInformer
     }
     # Cache the info doc now. We do the caching here so that it gets cached
     # whether it is being created via an image or an info.json request.
-    FileUtils.mkdir_p identifier_directory
-    File.open(info_cache_file_path, 'w') do |fh|
-      fh.puts @iiif_info.to_json
-    end
+    # TODO: Cache image info.json
+    # FileUtils.mkdir_p identifier_directory
+    # File.open(info_cache_file_path, 'w') do |fh|
+    #   fh.puts @iiif_info.to_json
+    # end
     # Also cache to Memcached.
 
     @iiif_info
@@ -86,7 +89,7 @@ class VideoStillInformer
 
   # TODO: DRY this up with Informer
   def identifier_directory
-    File.join Rails.root, "public/iiifv", @id, @time.to_s
+    File.join Rails.root, "public/iiifvi", @id
   end
 
   # TODO: DRY this up with Informer
@@ -113,7 +116,11 @@ class VideoStillInformer
   end
 
   def info_id
-    File.join IiifUrl.base_url, @id, @time.to_s
+    File.join IiifUrl.base_url + 'vi', @id
+  end
+
+  def video_info_id
+    File.join IiifUrl.base_url + 'v', @id
   end
 
 end

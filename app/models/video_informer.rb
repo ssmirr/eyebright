@@ -89,21 +89,20 @@ class VideoInformer
     File.join IiifUrl.base_url + 'v', @id
   end
 
-  def video_id(version)
-    basename = File.basename version.file
-    File.join @base_url, 'videos', basename
+  def image_info_id
+    File.join IiifUrl.base_url + 'vi', @id
   end
 
   def poster_image
     {
-      "@id": File.join(info_id, '2/full/full/0/default.jpg'),
+      "@id": File.join(image_info_id, '2/full/full/0/default.jpg'),
       "@type": "Image",
       "format": "image/jpeg",
       width: sources.first[:width],
       height: sources.first[:height],
       service: {
         "@context": "http://iiif.io/api/image/2/context.json",
-        "@id": info_id,
+        "@id": image_info_id,
         profile: "http://iiif.io/api/image/2/level2.json"
       },
     }

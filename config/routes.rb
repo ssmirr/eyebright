@@ -9,11 +9,14 @@ Rails.application.routes.draw do
   get "#{image_prefix}/:id/view", to: 'images#view'
 
   # Experimental Video API
-  video_prefix = 'iiifv'
   # Routes for an image from a video
+  video_image_prefix = 'iiifvi'
   time_constraint = /(\d\d\:\d\d\:\d\d|\d+)(\.\d+)?/
-  match "#{video_prefix}/:id/:time/:region/:size/:rotation/:quality.:format", constraints: {time: time_constraint}, to: 'videos#show', via: [:get, :head]
-  match "#{video_prefix}/:id/:time/info.json", constraints: {time: time_constraint}, to: 'videos#image_info', via: [:get, :head]
+  match "#{video_image_prefix}/:id/:time/:region/:size/:rotation/:quality.:format", constraints: {time: time_constraint}, to: 'videos#show_image', via: [:get, :head]
+  match "#{video_image_prefix}/:id/info.json", constraints: {time: time_constraint}, to: 'videos#image_info', via: [:get, :head]
+  get "#{video_image_prefix}/:id", to: redirect("#{video_image_prefix}/%{id}/info.json")
+
+  video_prefix = 'iiifv'
   # info.json for the video
   match "#{video_prefix}/:id/info.json", to: 'videos#info', via: [:get, :head], as: :video_info
   # video viewer. route must be before redirect

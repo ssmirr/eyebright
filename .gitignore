@@ -20,9 +20,11 @@
 # Ignore Byebug command history file.
 .byebug_history
 
-# Ignore /iiif
+# Ignore /iiif for images
 public/iiif
-public/iiifv/2
+# Ignore /iiifvi which holds images
+public/iiifvi
+# TODO: Ignore /iiifv where the videos live?
 
 .imdone
 .vagrant
