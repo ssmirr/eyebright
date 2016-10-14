@@ -13,3 +13,15 @@
  *= require_tree .
  *= require_self
  */
+
+body {
+  color: white;
+  background-color: black;
+}
+
+video {
+  max-width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+  display: block;
+}

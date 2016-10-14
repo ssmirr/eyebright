@@ -9,8 +9,7 @@ Vagrant.configure(2) do |config|
   # using a specific IP.
   config.vm.network "private_network", ip: "192.168.33.31"
 
-  # sudo ufw allow from 192.168.33.0/24
-  config.vm.synced_folder '.', '/vagrant', type: 'nfs', mount_options: ['nolock']
+  config.vm.synced_folder '.', '/vagrant', type: 'rsync', rsync__exclude: ['.git/', 'ansible/', '.byebug_history']
 
   config.vm.network "forwarded_port", guest: 80, host: 8089,
       auto_correct: true

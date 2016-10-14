@@ -51,6 +51,9 @@ class VideosController < ApplicationController
     render json: json, content_type: content_type
   end
 
+  def viewer
+  end
+
   private
 
   def identifier_directory
