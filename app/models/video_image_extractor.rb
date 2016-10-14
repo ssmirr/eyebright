@@ -73,7 +73,7 @@ class VideoImageExtractor
 
   def full_size_image_directory
     File.join Rails.root,
-     "public/iiifv/#{@id}",
+     "public/iiifvi/#{@id}",
      "#{@params[:time]}/full/full/0"
   end
 
