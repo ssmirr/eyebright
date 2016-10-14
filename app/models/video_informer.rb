@@ -98,8 +98,8 @@ class VideoInformer
       "@id": File.join(image_info_id, '2/full/full/0/default.jpg'),
       "@type": "Image",
       "format": "image/jpeg",
-      width: sources.first[:width],
-      height: sources.first[:height],
+      width: sorted_sources.first[:width],
+      height: sorted_sources.first[:height],
       service: {
         "@context": "http://iiif.io/api/image/2/context.json",
         "@id": image_info_id,
