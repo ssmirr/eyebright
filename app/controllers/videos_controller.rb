@@ -3,7 +3,7 @@ class VideosController < ApplicationController
   # before_action :validate_request, only: [:show]
 
   def show
-    video_filepath = VideoResolver.path(params[:id]) + '.mp4'
+    video_filepath = VideoResolver.path(params[:id]) 
     if File.exist? video_filepath
       extractor = VideoImageExtractor.new(request, params)
       image_path = extractor.extract

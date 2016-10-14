@@ -16,6 +16,7 @@
       with_items:
         - libtiff-tools
         - ImageMagick
+        - libmp4v2
   roles:
     # sudo service firewalld stop
     - role: basic-setup

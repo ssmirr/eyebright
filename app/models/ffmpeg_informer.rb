@@ -32,11 +32,50 @@ class FfmpegInformer
 
   # TODO: this could look at the format in the info and not rely on extension
   def format
-    case File.extname @file
-    when '.mp4'
+    File.extname(@file).sub('.','')
+  end
+
+  def mimetype
+    case format
+    when 'mp4'
       'video/mp4'
-    when '.webm'
+    when 'webm'
       'video/webm'
+    end
+  end
+
+  def mimetype_with_codecs
+    # %Q|#{mimetype}; codecs="#{codecs_string}"|
+    mimetype
+  end
+
+  def codecs
+    [video_codec, audio_codec].compact
+  end
+
+  def codecs_string
+    codecs.join(',')
+  end
+
+  # TODO: use mp4file to get more specific codecs for mp4
+  # http://stackoverflow.com/questions/16363167/html5-video-tag-codecs-attribute
+  def video_codec
+    if video_stream
+      if video_stream['codec_name'] == 'h264'
+        video_stream['codec_tag_string']
+      else
+        video_stream['codec_name']
+      end
+    end
+  end
+
+  def audio_codec
+    if audio_stream
+      if audio_stream['codec_name']== 'aac'
+        audio_stream['codec_tag_string']
+      else
+        audio_stream['codec_name']
+      end
     end
   end
 
@@ -46,7 +85,18 @@ class FfmpegInformer
     end
   end
 
+  def audio_stream
+    @info['streams'].find do |stream|
+      stream['codec_type'] == 'audio'
+    end
+  end
+
+  def size
+    @info['format']['size']
+  end
+
   def ffmpeg_info_cmd
+    # TODO: add -show_data for extradata which might have more codec information?
     "ffprobe -v error -print_format json -show_format -show_streams #{@file}"
   end
 

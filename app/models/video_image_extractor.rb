@@ -6,21 +6,33 @@ class VideoImageExtractor
     @request = request
     @iiif = IiifUrl.parse request.path
     @params = params
-    @path = VideoResolver.path(@params[:id]) + '.mp4'
+    @id = params[:id]
+    @path = video_path
     get_informer
     enrich_iiif_params
     # FIXME: pick better temporary images
-    @temp_out_image = Tempfile.new [@params[:id], '.jpg']
-    @temp_response_image = Tempfile.new [@params[:id], ".#{@params[:format]}"]
+    @temp_out_image = Tempfile.new [@id, '.jpg']
+    @temp_response_image = Tempfile.new [@id, ".#{@params[:format]}"]
+  end
+
+  def video_path
+    @informer = VideoInformer.new @id, @request.base_url
+    @informer.inform
+    @video_info = @informer.iiif_info
+
+    max = @video_info[:sources].max_by do |source|
+      source[:width] * source[:height]
+    end
+    File.join VideoResolver.path(@id), "#{max[:width]},#{max[:height]}", "default.#{max[:format]}"
   end
 
   def get_informer
-    mc_info = MDC.get "video:#{@params[:id]}"
+    mc_info = MDC.get "video:#{@id}"
     if mc_info
-      Rails.logger.info "Memcached Hit #{@params[:id]}"
+      Rails.logger.info "Memcached Hit #{@id}"
       @informer = OpenStruct.new mc_info
     else
-      @informer = VideoInformer.new @params[:id], @request.base_url
+      @informer = VideoInformer.new @id, @request.base_url
       @informer.inform
     end
   end
@@ -61,7 +73,7 @@ class VideoImageExtractor
 
   def full_size_image_directory
     File.join Rails.root,
-     "public/iiifv/#{@params[:id]}",
+     "public/iiifv/#{@id}",
      "#{@params[:time]}/full/full/0"
   end
 

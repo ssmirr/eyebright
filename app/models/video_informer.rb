@@ -19,9 +19,13 @@ class VideoInformer
   end
 
   def get_ffmpeg_info
-    Dir.glob(@path + '*').map do |video_file|
+    video_paths.map do |video_file|
       FfmpegInformer.new video_file
     end
+  end
+
+  def video_paths
+    Dir.glob(@path + '*/*/*').grep(/\.(mp4|webm)/)
   end
 
   def iiif_info
@@ -40,12 +44,12 @@ class VideoInformer
       '_comments': [
         'This is totally not how this should look, but will give some idea of what data we would want about a video and what is possible for extracting from ffmpeg.'
       ],
-      '@id' => info_id,
-      poster: poster_image,
-      sources: sources,
-      protocol: 'http://iiif.io/api/video',
-      profile: ["http://iiif.io/api/video/0/level0.json"],
-      '@context' => ["http://iiif.io/api/video/0/context.json"],
+      '@context' => "http://iiif.io/api/video/0/context.json",
+      'id' => info_id,
+      profile: "http://iiif.io/api/video/0/level0.json",
+      attribution: Rails.configuration.eyebright['attribution'],
+      sources: sorted_sources,
+      thumbnail: poster_image,
     }
     if false # TODO: turn video info.json caching on again
       FileUtils.mkdir_p identifier_directory
@@ -62,18 +66,22 @@ class VideoInformer
     else
       @sources = @ffmpeg_info.map do |version|
         video_file = {
-          "@id" => video_id(version),
           width: version.width,
           height: version.height,
           duration: version.duration,
+          type: version.mimetype_with_codecs,
           format: version.format,
-
-          ffmpeg_info: version.info,
+          size: version.size
+          # ffmpeg_info: version.info,
         }
         video_file['frames'] = version.frames if version.frames
         video_file
       end
     end
+  end
+
+  def sorted_sources
+    sources.sort_by{ |source| source[:width] * source[:height] }.reverse
   end
 
   def info_id
@@ -89,15 +97,15 @@ class VideoInformer
   def poster_image
     {
       "@id": File.join(info_id, '2/full/full/0/default.jpg'),
-      "@type": "dctypes:Image",
+      "@type": "Image",
       "format": "image/jpeg",
+      width: sources.first[:width],
+      height: sources.first[:height],
       service: {
         "@context": "http://iiif.io/api/image/2/context.json",
         "@id": info_id,
         profile: "http://iiif.io/api/image/2/level2.json"
       },
-      width: sources.first[:width],
-      height: sources.first[:height]
     }
   end
 
@@ -109,7 +117,6 @@ class VideoInformer
     @height = @iiif_info['height']
     @duration = @iiif_info['duration']
     @frames = @iiif_info['frames']
-    # @scale_factors = @iiif_info['tiles'][0]['scaleFactors']
   end
 
   def read_info_file
