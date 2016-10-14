@@ -15,8 +15,8 @@ class VideoStillInformer
   end
 
   def utilize_video_informer
-    @width = @video_informer.width
-    @height = @video_informer.height
+    @width = @video_informer.sources.first[:width]
+    @height = @video_informer.sources.first[:height]
   end
 
   def iiif_info
@@ -34,13 +34,8 @@ class VideoStillInformer
   # TODO: DRY this up with Informer
   def create_full_info
     @iiif_info = {
-      # sizes: sizes,
-      # tiles: [
-      #   {
-      #     width: @tile_width,
-      #     scaleFactors: @scale_factors
-      #   }
-      # ],
+      width: @width,
+      height: @height,
       'id' => info_id,
       within: video_info_id,
       '_comments': [
