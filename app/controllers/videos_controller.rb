@@ -5,7 +5,7 @@ class VideosController < ApplicationController
   def show
     video_filepath = VideoResolver.path(params[:id]) + '.mp4'
     if File.exist? video_filepath
-      extractor = VideoImageExtractor.new(request.path, params)
+      extractor = VideoImageExtractor.new(request, params)
       image_path = extractor.extract
 
       if File.size? image_path

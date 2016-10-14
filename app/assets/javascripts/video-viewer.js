@@ -1,5 +1,6 @@
 $(document).ready(function() {
-  $('button#iiif-video-button').on('click', function () {
+
+  var display_video = function(){
     $('#iiif-video').empty();
     $.ajax({
       url: $('input#iiif-video-input')[0].value,
@@ -19,5 +20,16 @@ $(document).ready(function() {
         $('#iiif-video').append(video);
       }
     });
+  }
+
+  $('button#iiif-video-button').on('click', function () {
+    display_video();
   });
+
+  $('.info-json').on('click', function(event){
+    $('input#iiif-video-input')[0].value = this.href;
+    display_video();
+    event.preventDefault();
+  });
+
 });

@@ -15,7 +15,7 @@ Rails.application.routes.draw do
   match "#{video_prefix}/:id/:time/:region/:size/:rotation/:quality.:format", constraints: {time: time_constraint}, to: 'videos#show', via: [:get, :head]
   match "#{video_prefix}/:id/:time/info.json", constraints: {time: time_constraint}, to: 'videos#image_info', via: [:get, :head]
   # info.json for the video
-  match "#{video_prefix}/:id/info.json", to: 'videos#info', via: [:get, :head]
+  match "#{video_prefix}/:id/info.json", to: 'videos#info', via: [:get, :head], as: :video_info
   # video viewer. route must be before redirect
   get "#{video_prefix}/viewer", to: 'videos#viewer'
   # redirect from identifier to the info.json for the video

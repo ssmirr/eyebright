@@ -9,7 +9,13 @@ Vagrant.configure(2) do |config|
   # using a specific IP.
   config.vm.network "private_network", ip: "192.168.33.31"
 
-  config.vm.synced_folder '.', '/vagrant', type: 'rsync', rsync__exclude: ['.git/', 'ansible/', '.byebug_history']
+  # on host: sudo ufw allow from 192.168.33.0/24
+  # on guest: sudo yum remove firewalld
+  config.vm.synced_folder '.', '/vagrant', type: 'nfs', mount_options: ['nolock', 'rw', 'vers=3', 'tcp', 'actimeo=2']
+
+  # host: vagrant plugin install vagrant-sshfs
+  # host: sudo apt-get install openssh-server
+  # config.vm.synced_folder '.', '/vagrant', type: 'sshfs'
 
   config.vm.network "forwarded_port", guest: 80, host: 8089,
       auto_correct: true

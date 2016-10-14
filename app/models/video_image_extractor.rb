@@ -2,8 +2,9 @@ class VideoImageExtractor
 
   include Converter
 
-  def initialize(url, params)
-    @iiif = IiifUrl.parse url
+  def initialize(request, params)
+    @request = request
+    @iiif = IiifUrl.parse request.path
     @params = params
     @path = VideoResolver.path(@params[:id]) + '.mp4'
     get_informer
@@ -19,7 +20,7 @@ class VideoImageExtractor
       Rails.logger.info "Memcached Hit #{@params[:id]}"
       @informer = OpenStruct.new mc_info
     else
-      @informer = VideoInformer.new @params[:id]
+      @informer = VideoInformer.new @params[:id], @request.base_url
       @informer.inform
     end
   end
