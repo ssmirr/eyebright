@@ -17,6 +17,17 @@ $(document).ready(function() {
             video.src = source.id;
           }
         });
+        data.tracks.forEach(function(track_info){
+          var track = document.createElement('track');
+          track.src = track_info.id;
+          track.kind = track_info.kind;
+          track.srclang = track_info.language;
+          track.label = track_info.kind + ' (' + track_info.language + ')';
+          // if ((track_info.kind == 'subtitles') && (track_info.language == 'nl')) {
+          //   track.default = 'default';
+          // }
+          $(video).append(track);
+        });
         $('#iiif-video').append(video);
       }
     });
