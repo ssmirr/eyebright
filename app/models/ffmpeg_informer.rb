@@ -51,7 +51,6 @@ class FfmpegInformer
 
   def codecs
     [video_codec, audio_codec].compact
-    [video_codec]
   end
 
   def codecs_string
@@ -93,7 +92,8 @@ class FfmpegInformer
   def audio_codec
     if audio_stream
       if audio_stream['codec_name']== 'aac'
-        audio_stream['codec_tag_string']
+        # TODO: Just hard code that this is a low complexity
+        audio_stream['codec_tag_string'] + '.40.2'
       else
         audio_stream['codec_name']
       end
