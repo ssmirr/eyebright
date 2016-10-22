@@ -49,6 +49,7 @@ class VideoInformer
       profile: "http://iiif.io/api/video/0/level0.json",
       attribution: Rails.configuration.eyebright['attribution'],
       sources: sorted_sources,
+      tracks: tracks,
       thumbnail: poster_image,
     }
     if false # TODO: turn video info.json caching on again
@@ -86,7 +87,12 @@ class VideoInformer
   end
 
   def video_path_after_root(version)
-    version.file.sub /^\/vagrant\/public\/iiifv(\/)/, ''
+    path_after_root version.file
+  end
+
+  def path_after_root(file_path)
+    root_path = File.join Rails.root, 'public', 'iiifv'
+    file_path.sub /^#{root_path}/, ''
   end
 
   def sorted_sources
@@ -100,6 +106,34 @@ class VideoInformer
 
   def image_info_id
     File.join IiifUrl.base_url + 'vi', @id
+  end
+
+  def track_paths
+    Dir.glob(@path + '/*').grep(/\.vtt/)
+  end
+
+  def tracks
+    track_paths.map do |track_file|
+      kind, language = parse_track_name(track_file)
+      {
+        id: track_identifier(track_file),
+        kind: kind,
+        language: language,
+      }
+    end
+  end
+
+  def track_identifier(track_file)
+    File.join @base_url, 'iiifv', path_after_root(track_file)
+  end
+
+  def parse_track_name(track_file)
+    extension = File.extname track_file
+    basename = File.basename track_file, extension
+    name, kind, language = basename.split('-')
+    kind = 'captions' if kind.nil?
+    language = 'en' if language.nil?
+    [kind, language]
   end
 
   def poster_image
