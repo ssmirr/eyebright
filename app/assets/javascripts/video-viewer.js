@@ -9,12 +9,12 @@ $(document).ready(function() {
       success: function(data) {
         var video = document.createElement('video');
         video.controls = true;
-        video.poster = data.thumbnail['@id'];
+        video.poster = data.thumbnail['id'];
         // console.log(data);
         data.sources.forEach(function(source){
           // console.log(source);
           if (video.canPlayType(source.type).length > 0 && video.src.length < 1) {
-            video.src = data.id + '/' + source.width + ',' + source.height + '/default.' + source.format;
+            video.src = source.id;
           }
         });
         $('#iiif-video').append(video);
