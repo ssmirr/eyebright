@@ -25,7 +25,7 @@ class VideoInformer
   end
 
   def video_paths
-    Dir.glob(@path + '*/*/*').grep(/\.(mp4|webm)/)
+    Dir.glob(@path + '/*').grep(/\.(mp4|webm)/)
   end
 
   def iiif_info
@@ -66,6 +66,7 @@ class VideoInformer
     else
       @sources = @ffmpeg_info.map do |version|
         video_file = {
+          id: video_identifier(version),
           width: version.width,
           height: version.height,
           duration: version.duration,
@@ -78,6 +79,14 @@ class VideoInformer
         video_file
       end
     end
+  end
+
+  def video_identifier(version)
+    File.join @base_url, 'iiifv', video_path_after_root(version)
+  end
+
+  def video_path_after_root(version)
+    version.file.sub /^\/vagrant\/public\/iiifv(\/)/, ''
   end
 
   def sorted_sources
@@ -95,14 +104,14 @@ class VideoInformer
 
   def poster_image
     {
-      "@id": File.join(image_info_id, '2/full/full/0/default.jpg'),
-      "@type": "Image",
+      "id": File.join(image_info_id, '2/full/full/0/default.jpg'),
+      "type": "Image",
       "format": "image/jpeg",
       width: sorted_sources.first[:width],
       height: sorted_sources.first[:height],
       service: {
         "@context": "http://iiif.io/api/image/2/context.json",
-        "@id": image_info_id,
+        "id": image_info_id,
         profile: "http://iiif.io/api/image/2/level2.json"
       },
     }
