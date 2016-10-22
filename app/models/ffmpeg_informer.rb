@@ -45,12 +45,13 @@ class FfmpegInformer
   end
 
   def mimetype_with_codecs
-    # %Q|#{mimetype}; codecs="#{codecs_string}"|
-    mimetype
+    %Q|#{mimetype}; codecs="#{codecs_string}"|
+    # mimetype
   end
 
   def codecs
     [video_codec, audio_codec].compact
+    [video_codec]
   end
 
   def codecs_string
@@ -62,10 +63,30 @@ class FfmpegInformer
   def video_codec
     if video_stream
       if video_stream['codec_name'] == 'h264'
-        video_stream['codec_tag_string']
+        "#{video_stream['codec_tag_string']}.#{mp4_video_profile}#{mp4_level}"
       else
         video_stream['codec_name']
       end
+    end
+  end
+
+  def mp4_video_profile
+    case video_stream['profile']
+    when 'Constrained Baseline'
+      '42E0'
+    when 'Main'
+      '4D40'
+    when 'High'
+      '6400'
+    when 'Extended'
+      '58A0'
+    end
+  end
+
+  def mp4_level
+    if video_stream['level']
+      level = video_stream['level'].to_s.to_i(10).to_s(16).upcase
+      level.rjust(2).gsub(' ', '0')
     end
   end
 

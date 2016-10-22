@@ -73,8 +73,8 @@ class VideoInformer
           duration: version.duration,
           type: version.mimetype_with_codecs,
           format: version.format,
-          size: version.size
-          # ffmpeg_info: version.info,
+          size: version.size, 
+          ffmpeg_info: version.info,
         }
         video_file['frames'] = version.frames if version.frames
         video_file
