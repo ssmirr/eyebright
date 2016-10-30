@@ -74,9 +74,9 @@ class VideoInformer
           type: version.mimetype_with_codecs,
           format: version.format,
           size: version.size,
-          # ffmpeg_info: version.info,
         }
         video_file['frames'] = version.frames if version.frames
+        video_file['ffmpeg_info'] = version.info if Rails.env == 'development'
         video_file
       end
     end

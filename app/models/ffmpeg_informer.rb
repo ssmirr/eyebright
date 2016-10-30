@@ -84,8 +84,7 @@ class FfmpegInformer
 
   def mp4_level
     if video_stream['level']
-      level = video_stream['level'].to_s.to_i(10).to_s(16).upcase
-      level.rjust(2).gsub(' ', '0')
+      "%02X" % video_stream['level']
     end
   end
 
