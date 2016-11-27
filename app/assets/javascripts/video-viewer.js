@@ -3,6 +3,11 @@ $(document).ready(function() {
 
   var display_video = function(){
     $('#iiif-video').empty();
+    $('#currentType').empty();
+    if (vjsvideo){
+      vjsvideo.dispose();
+      vjsvideo = null;
+    }
     $.ajax({
       url: $('input#iiif-video-input')[0].value,
       cache: true,
@@ -12,7 +17,7 @@ $(document).ready(function() {
         video.id = 'dynamic-video';
         video.controls = true;
         video.poster = data.thumbnail['id'];
-        video.className = "video-js vjs-default-skin";
+        video.className = "video-js vjs-default-skin vjs-fluid";
         data.tracks.forEach(function(track_info){
           var track = document.createElement('track');
           track.src = track_info.id;
