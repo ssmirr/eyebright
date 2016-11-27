@@ -57,6 +57,8 @@ class VideoInformer
       'id' => info_id,
       profile: "http://iiif.io/api/video/0/level0.json",
       attribution: Rails.configuration.eyebright['attribution'],
+      license: '',
+      logo: '',
       sources: sorted_sources,
       tracks: tracks,
       thumbnail: poster_image,
@@ -78,7 +80,7 @@ class VideoInformer
         video_file = {
           id: video_identifier(version),
           duration: version.duration,
-          type: version.mimetype_with_codecs,
+          mediaType: version.mimetype_with_codecs,
           format: version.format,
           size: version.size,
         }
@@ -109,7 +111,7 @@ class VideoInformer
   def hls_source
     {
       id: hls_uri,
-      type: 'application/vnd.apple.mpegURL',
+      mediaType: 'application/vnd.apple.mpegURL',
       format: 'ts', #todo support fMP4 for HLS as well
       "_comments": 'How to say this uses a MPEG-TS container or an fMP4 container?'
     }
@@ -122,7 +124,7 @@ class VideoInformer
   def dash_source
     {
       id: dash_uri,
-      type: 'application/dash+xml',
+      mediaType: 'application/dash+xml',
       "_comments": 'Since MPEG-DASH can use many different video and audio codecs, how to say that this uses some variant like DASH264 (which is actually about more than just the video and audio codecs used)?'
     }
   end

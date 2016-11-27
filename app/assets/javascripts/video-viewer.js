@@ -30,7 +30,7 @@ $(document).ready(function() {
         vjsvideo = videojs('dynamic-video', {});
         var sources = [];
         data.sources.forEach(function(source){
-          sources.push({type: source.type, src: source.id});
+          sources.push({type: source.mediaType, src: source.id});
         });
 
         vjsvideo.src(sources);
