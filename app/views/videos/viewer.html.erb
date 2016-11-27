@@ -1,3 +1,9 @@
+<link rel="stylesheet" href="https://vjs.zencdn.net/5.8.8/video-js.min.css">
+<script src="https://vjs.zencdn.net/5.8.8/video.min.js"></script>
+<script src="http://cdn.dashjs.org/latest/dash.all.min.js"></script>
+<%= javascript_include_tag 'videojs-dash.min.js' %>
+<%= javascript_include_tag 'video-viewer' %>
+
 <h1>IIIF Video info.json Demo</h1>
 
 <p><b>Note that this is just a demonstration and is definitely not what an IIIF Video info.json will be like once specified.</b></p>
@@ -8,8 +14,10 @@
 
 <div id="iiif-video"></div>
 
+<div>
+  <span id="currentType"></span>
+</div>
+
 <h2>Examples</h2>
 
 <%= render partial: 'development_examples'  %>
-
-<%= javascript_include_tag 'video-viewer' %>

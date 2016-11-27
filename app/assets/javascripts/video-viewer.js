@@ -1,3 +1,4 @@
+var vjsvideo = null;
 $(document).ready(function() {
 
   var display_video = function(){
@@ -11,13 +12,7 @@ $(document).ready(function() {
         video.id = 'dynamic-video';
         video.controls = true;
         video.poster = data.thumbnail['id'];
-        // console.log(data);
-        data.sources.forEach(function(source){
-          // console.log(source);
-          if (video.canPlayType(source.type).length > 0 && video.src.length < 1) {
-            video.src = source.id;
-          }
-        });
+        video.className = "video-js vjs-default-skin";
         data.tracks.forEach(function(track_info){
           var track = document.createElement('track');
           track.src = track_info.id;
@@ -27,6 +22,15 @@ $(document).ready(function() {
           $(video).append(track);
         });
         $('#iiif-video').append(video);
+        vjsvideo = videojs('dynamic-video', {});
+        var sources = [];
+        data.sources.forEach(function(source){
+          sources.push({type: source.type, src: source.id});
+        });
+
+        vjsvideo.src(sources);
+        $('#currentType').html(vjsvideo.currentType());
+        vjsvideo.play();
       }
     });
   }

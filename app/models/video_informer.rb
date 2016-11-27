@@ -103,7 +103,11 @@ class VideoInformer
   end
 
   def add_hls_source
-    @sources << {
+    @sources.unshift hls_source
+  end
+
+  def hls_source
+    {
       id: hls_uri,
       type: 'application/vnd.apple.mpegURL',
       format: 'ts', #todo support fMP4 for HLS as well
@@ -112,7 +116,11 @@ class VideoInformer
   end
 
   def add_dash_source
-    @sources << {
+    @sources.unshift dash_source
+  end
+
+  def dash_source
+    {
       id: dash_uri,
       type: 'application/dash+xml',
       "_comments": 'Since MPEG-DASH can use many different video and audio codecs, how to say that this uses some variant like DASH264 (which is actually about more than just the video and audio codecs used)?'
@@ -124,7 +132,7 @@ class VideoInformer
   end
 
   def hls_filepath
-    File.join hls_directory, "#{@id}-hls.m3u8"
+    File.join hls_directory, "#{@id}.m3u8"
   end
 
   def hls_uri
@@ -136,7 +144,7 @@ class VideoInformer
   end
 
   def dash_filepath
-    File.join dash_directory, "#{@id}-dash.mpd"
+    File.join dash_directory, "#{@id}.mpd"
   end
 
   def dash_uri
