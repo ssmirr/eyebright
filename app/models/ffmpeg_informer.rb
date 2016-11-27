@@ -15,11 +15,11 @@ class FfmpegInformer
   end
 
   def width
-    video_stream['width']
+    video_stream['width'] if video_stream
   end
 
   def height
-    video_stream['height']
+    video_stream['height'] if video_stream
   end
 
   def duration
@@ -27,7 +27,7 @@ class FfmpegInformer
   end
 
   def frames
-    video_stream['nb_frames']
+    video_stream['nb_frames'] if video_stream
   end
 
   # TODO: this could look at the format in the info and not rely on extension
@@ -38,7 +38,11 @@ class FfmpegInformer
   def mimetype
     case format
     when 'mp4'
-      'video/mp4'
+      if width.nil?
+        'audio/mp4'
+      else
+        'video/mp4'
+      end
     when 'webm'
       'video/webm'
     end
