@@ -13,7 +13,8 @@
 
 body {
   color: white;
-  background-color: black;
+  background-color: rgb(80, 80, 80);
+  font-family: sans-serif;
 }
 
 video {
@@ -21,4 +22,10 @@ video {
   margin-left: auto;
   margin-right: auto;
   display: block;
+}
+
+#video-infojson-examples {
+  a:link, a:visited {
+    color: hsl(185, 77%, 46%);
+  }
 }
