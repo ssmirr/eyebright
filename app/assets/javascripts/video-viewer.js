@@ -4,6 +4,8 @@ $(document).ready(function() {
   var display_video = function(){
     $('#iiif-video').empty();
     $('#currentType').empty();
+    $('#currentTech').empty();
+    $('#currentSrc').empty();
     if (vjsvideo){
       vjsvideo.dispose();
       vjsvideo = null;
@@ -32,10 +34,11 @@ $(document).ready(function() {
         data.sources.forEach(function(source){
           sources.push({type: source.mediaType, src: source.id});
         });
-
         vjsvideo.src(sources);
-        $('#currentType').html(vjsvideo.currentType());
         vjsvideo.play();
+        $('#currentType').html(vjsvideo.currentType());
+        $('#currentSrc').html(vjsvideo.currentSrc());
+        $('#currentTech').html(vjsvideo.techName_);
       }
     });
   }
