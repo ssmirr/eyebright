@@ -35,7 +35,7 @@ $(document).ready(function() {
           sources.push({type: source.mediaType, src: source.id});
         });
         vjsvideo.src(sources);
-        vjsvideo.play();
+        // vjsvideo.play();
         $('#currentType').html(vjsvideo.currentType());
         $('#currentSrc').html(vjsvideo.currentSrc());
         $('#currentTech').html(vjsvideo.techName_);
