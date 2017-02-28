@@ -1,4 +1,4 @@
-# TODO: This could use a better 
+# TODO: This could use a better
 module Converter
 
   def convert_cmd
@@ -142,15 +142,22 @@ module Converter
     size = @iiif[:size]
     if size == 'full'
       nil
-    elsif !size[:w] && size[:h]
-      "x#{size[:h]}"
-    elsif size[:w] && !size[:h]
-      "#{size[:w]}"
-    elsif size[:w] && size[:h]
-      if size[:confined]
-        "#{size[:w]}x#{size[:h]}"
-      else
-        "#{size[:w]}x#{size[:h]}!"
+    else
+      # If the size requested for either height or width is 
+      h = size[:h]
+      w = size[:w]
+      h = @informer.height if h && h > @informer.height
+      w = @informer.width if w && w > @informer.width
+      if !w && h
+        "x#{h}"
+      elsif w && !h
+        "#{w}"
+      elsif w && h
+        if size[:confined]
+          "#{w}x#{h}"
+        else
+          "#{w}x#{h}!"
+        end
       end
     end
   end
