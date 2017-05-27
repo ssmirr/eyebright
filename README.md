@@ -29,7 +29,7 @@ cd /vagrant
 bundle
 ```
 
-Currently there is a very simple resolver in `app/models/resolver.rb` that in development expects to find JPEG2000 files in `./tmp/jp2s`. Add some JP2s there and then you ought to be able to see an image at: <https://localhost:8444/iiif/hubble/full/pct:20/0/default.jpg>
+Currently there is a very simple resolver in `app/models/resolver.rb` that in development expects to find JPEG2000 files in `./test/images`. Add some JP2s there in a directory using the first two characters of the filename. Then you ought to be able to see an image at: <http://localhost:8091/iiif/hubble/full/pct:20/0/default.jpg>
 
 Note, you will have to accept the self-signed certificate to use the version deployed behind Apache and Passenger. If you would like to do development on Eyebright (or avoid accepting the self-signed cert), you will want to run a development server like this:
 
@@ -40,9 +40,9 @@ bundle
 bin/rails s -b 0.0.0.0
 ```
 
-Then on the host machine you can visit <http://localhost:8090/iiif/river/full/600,/0/default.jpg>. And change all the following URLs to "http://localhost:8090".
+Then on the host machine you can visit <http://localhost:8091/iiif/river/full/600,/0/default.jpg>. And change all the following URLs to "http://localhost:8091".
 
-You can see a list of JPEG2000 images that are included in the development environment below. For convenience of testing images, there is a OpenSeadragon pan/zoom viewer. It can be reached at a URL like: <https://localhost:8444/iiif/hubble/view>
+You can see a list of JPEG2000 images that are included in the development environment below. For convenience of testing images, there is a OpenSeadragon pan/zoom viewer. It can be reached at a URL like: <http://localhost:8091/iiif/hubble/view>
 
 ## Requirements
 
@@ -95,9 +95,9 @@ Naming these other commonly used square regions consistently means that determin
 
 You can visit URLs like this to see it in action:
 
-- <https://localhost:8444/iiif/river/square/200,/0/default.jpg>
-- <https://localhost:8444/iiif/river/!square/200,/0/default.jpg>
-- <https://localhost:8444/iiif/river/square!/200,/0/default.jpg>
+- <http://localhost:8091/iiif/river/square/200,/0/default.jpg>
+- <http://localhost:8091/iiif/river/!square/200,/0/default.jpg>
+- <http://localhost:8091/iiif/river/square!/200,/0/default.jpg>
 
 See below for other fun extensions.
 
@@ -149,7 +149,7 @@ To turn these features on for a particular environment change the value of the "
 
 These qualities also work (with variable success) in the embedded pan/zoom viewer like so:
 
-<https://localhost:8444/iiif/river/view?eyebright_mode=pixelized>
+<http://localhost:8091/iiif/river/view?eyebright_mode=pixelized>
 
 ## Authors
 
