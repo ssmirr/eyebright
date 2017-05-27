@@ -1,5 +1,4 @@
 development:
-  # base_resolver_path: /access-images/jp2s
   base_resolver_path: <%= File.join Rails.root, 'test/images' %>
   base_video_resolver_path: <%= File.join Rails.root, 'public/iiifv' %>
   fun: true
